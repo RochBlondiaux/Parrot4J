@@ -27,18 +27,6 @@
 
     <!-- Dependencies -->
     <dependencies>
-        <!-- Guice -->
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>5.1.0</version>
-        </dependency>
-        <!-- Guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.1-jre</version>
-        </dependency>
         <!-- Log4J API -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -63,6 +51,12 @@
             <groupId>xuggle</groupId>
             <artifactId>xuggle-xuggler</artifactId>
             <version>5.4</version>
+        </dependency>
+        <!-- Jetbrains Annotations -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
         </dependency>
     </dependencies>
 
