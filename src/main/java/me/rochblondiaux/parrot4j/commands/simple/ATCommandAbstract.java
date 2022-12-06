@@ -8,9 +8,7 @@ import me.rochblondiaux.parrot4j.data.NavData;
 
 public abstract class ATCommandAbstract implements ATCommand {
     private static final String CARRIAGE_RETURN = "\r";
-
     private static final int NO_TIMEOUT = 0;
-
     private final boolean preparationCommandNeeded;
 
     public ATCommandAbstract(boolean preparationCommandNeeded) {

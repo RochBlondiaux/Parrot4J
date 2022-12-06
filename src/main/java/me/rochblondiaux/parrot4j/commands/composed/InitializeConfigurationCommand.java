@@ -23,12 +23,12 @@ public class InitializeConfigurationCommand implements ComposedCommand {
 
     public InitializeConfigurationCommand(LoginData loginData, ARDrone1VideoCodec videoCodec) {
         this.loginData = loginData;
-        this.videoCodecCode = String.valueOf(videoCodec.getCodecCode());
+        this.videoCodecCode = String.valueOf(videoCodec.getCodecValue());
     }
 
     public InitializeConfigurationCommand(LoginData loginData, ARDrone2VideoCodec videoCodec) {
         this.loginData = loginData;
-        this.videoCodecCode = String.valueOf(videoCodec.getCodecCode());
+        this.videoCodecCode = String.valueOf(videoCodec.getCodecValue());
     }
 
     @Override
@@ -48,19 +48,19 @@ public class InitializeConfigurationCommand implements ComposedCommand {
 
     @Override
     public void checkSuccess(NavData navData, DroneConfiguration droneConfiguration) {
-        String firmwareVersion = droneConfiguration.getConfig().get(DroneConfiguration.FIRMWARE_VERSION_KEY);
+        String firmwareVersion = droneConfiguration.config().get(DroneConfiguration.FIRMWARE_VERSION_KEY);
         checkState(VersionHelper.compareVersions(firmwareVersion, Config.MIN_FIRMWARE_VERSION) >= 0, "The firmware version used is too old");
 
-        String sessionId = droneConfiguration.getConfig().get(DroneConfiguration.SESSION_ID_KEY);
-        String profileId = droneConfiguration.getConfig().get(DroneConfiguration.PROFILE_ID_KEY);
-        String applicationId = droneConfiguration.getConfig().get(DroneConfiguration.APPLICATION_ID_KEY);
+        String sessionId = droneConfiguration.config().get(DroneConfiguration.SESSION_ID_KEY);
+        String profileId = droneConfiguration.config().get(DroneConfiguration.PROFILE_ID_KEY);
+        String applicationId = droneConfiguration.config().get(DroneConfiguration.APPLICATION_ID_KEY);
 
         checkState(Objects.equals(loginData.getSessionChecksum(), sessionId),
                 String.format("The session ID was not set to '%s', but was '%s'", loginData.getSessionChecksum(), sessionId));
         checkState(Objects.equals(loginData.getProfileChecksum(), profileId), "The profile ID was not set");
         checkState(Objects.equals(loginData.getApplicationChecksum(), applicationId), "The application ID was not set");
 
-        String videoCodecCode = droneConfiguration.getConfig().get(DroneConfiguration.VIDEO_CODEC_KEY);
+        String videoCodecCode = droneConfiguration.config().get(DroneConfiguration.VIDEO_CODEC_KEY);
         checkState(Objects.equals(this.videoCodecCode, videoCodecCode), "The video codec was not set");
     }
 }

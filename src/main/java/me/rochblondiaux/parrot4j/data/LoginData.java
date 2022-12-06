@@ -1,7 +1,9 @@
 package me.rochblondiaux.parrot4j.data;
 
+import lombok.Getter;
 import me.rochblondiaux.parrot4j.helpers.ChecksumHelper;
 
+@Getter
 public class LoginData {
     private final String sessionChecksum;
 
@@ -13,17 +15,5 @@ public class LoginData {
         sessionChecksum = ChecksumHelper.createRandomCrc32Hex();
         applicationChecksum = ChecksumHelper.createCrc32Hex(applicationName);
         profileChecksum = ChecksumHelper.createCrc32Hex(profileName);
-    }
-
-    public String getSessionChecksum() {
-        return sessionChecksum;
-    }
-
-    public String getProfileChecksum() {
-        return profileChecksum;
-    }
-
-    public String getApplicationChecksum() {
-        return applicationChecksum;
     }
 }

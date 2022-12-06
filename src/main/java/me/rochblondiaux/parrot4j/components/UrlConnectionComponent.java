@@ -12,9 +12,7 @@ import java.util.Collection;
 
 public class UrlConnectionComponent {
     private URLConnection connection;
-
     private InputStream inputStream;
-
     private BufferedReader reader;
 
     public void connect(String urlPath) {

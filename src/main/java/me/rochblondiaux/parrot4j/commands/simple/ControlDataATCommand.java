@@ -18,9 +18,8 @@ public class ControlDataATCommand extends ATCommandAbstract {
 
     @Override
     public void execute(CommandSender commandSender, CommandSenderCoordinator commandSenderCoordinator) {
-        if (controlDataMode == ControlDataMode.GET_CONFIGURATION_DATA) {
+        if (controlDataMode == ControlDataMode.GET_CONFIGURATION_DATA)
             commandSenderCoordinator.resetConfiguration();
-        }
         super.execute(commandSender, commandSenderCoordinator);
     }
 
@@ -31,25 +30,20 @@ public class ControlDataATCommand extends ATCommandAbstract {
 
     @Override
     public int getTimeoutMillis() {
-        switch (controlDataMode) {
-            case RESET_ACK_FLAG:
-                return DEFAULT_NAVDATA_TIMEOUT;
-            case GET_CONFIGURATION_DATA:
-                return DEFAULT_CONFIGURATION_TIMEOUT;
-            default:
-                return 0;
-        }
+        return switch (controlDataMode) {
+            case RESET_ACK_FLAG -> DEFAULT_NAVDATA_TIMEOUT;
+            case GET_CONFIGURATION_DATA -> DEFAULT_CONFIGURATION_TIMEOUT;
+            default -> 0;
+        };
     }
 
     @Override
     public void checkSuccess(NavData navData, DroneConfiguration droneConfiguration) {
         switch (controlDataMode) {
-            case RESET_ACK_FLAG:
-                checkState(!navData.getState().isControlReceived(), "The command config ACK flag was not reset");
-                break;
-            case GET_CONFIGURATION_DATA:
-                checkState(droneConfiguration != null, "The drone configuration was not sent");
-                break;
+            case RESET_ACK_FLAG ->
+                    checkState(!navData.getState().isControlReceived(), "The command config ACK flag was not reset");
+            case GET_CONFIGURATION_DATA ->
+                    checkState(droneConfiguration != null, "The drone configuration was not sent");
         }
     }
 }

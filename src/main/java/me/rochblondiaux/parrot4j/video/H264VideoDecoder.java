@@ -1,5 +1,6 @@
 package me.rochblondiaux.parrot4j.video;
 
+import com.xuggle.xuggler.*;
 import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.parrot4j.components.TcpComponent;
 import me.rochblondiaux.parrot4j.listeners.ImageListener;

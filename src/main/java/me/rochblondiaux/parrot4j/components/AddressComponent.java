@@ -1,18 +1,17 @@
 package me.rochblondiaux.parrot4j.components;
 
 import com.google.common.collect.Maps;
+import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 
+@NoArgsConstructor
 public class AddressComponent {
-    private Map<String, InetAddress> knownInetAddresses;
+    private final Map<String, InetAddress> knownInetAddresses = Maps.newHashMap();
 
-    public AddressComponent() {
-        knownInetAddresses = Maps.newHashMap();
-    }
 
     public InetAddress getInetAddress(String hostName) {
         try {

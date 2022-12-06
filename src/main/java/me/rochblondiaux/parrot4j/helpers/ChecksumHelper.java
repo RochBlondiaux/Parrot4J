@@ -15,7 +15,7 @@ public class ChecksumHelper {
     }
 
     public static String createCrc32Hex(String value) {
-        byte bytes[] = value.getBytes();
+        byte[] bytes = value.getBytes();
         Checksum checksumCreator = new CRC32();
         checksumCreator.update(bytes, 0, bytes.length);
         long checkSumValue = checksumCreator.getValue();
@@ -23,18 +23,17 @@ public class ChecksumHelper {
     }
 
     private static String fixLength(String hexString) {
-        while (hexString.length() != 8) {
-            hexString = "0" + hexString;
-        }
-        return hexString;
+        StringBuilder hexStringBuilder = new StringBuilder(hexString);
+        while (hexStringBuilder.length() != 8)
+            hexStringBuilder.insert(0, "0");
+        return hexStringBuilder.toString();
     }
 
     public static String createRandomString() {
         Random random = new Random();
         StringBuilder stringBuilder = new StringBuilder(RANDOM_STRING_LENGTH);
-        for (int i = 0; i < RANDOM_STRING_LENGTH; i++) {
+        for (int i = 0; i < RANDOM_STRING_LENGTH; i++)
             stringBuilder.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
-        }
         return stringBuilder.toString();
     }
 }

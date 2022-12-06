@@ -31,6 +31,8 @@ package me.rochblondiaux.parrot4j.video;
 // may be used to endorse or promote products derived from this software without
 // specific prior written permission.
 
+import java.util.Arrays;
+
 public class P264ImageDecoder {
     private static final int BLOCK_WIDTH = 8;
 
@@ -107,7 +109,7 @@ public class P264ImageDecoder {
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    private short[] dataBlockBuffer = new short[64];
+    private final short[] dataBlockBuffer = new short[64];
 
     private int streamField;
 
@@ -151,7 +153,7 @@ public class P264ImageDecoder {
     private int[] javaPixelData;
 
     /* Data used by inverseTransform */
-    private int[] workSpace = new int[64];
+    private final int[] workSpace = new int[64];
 
     /* Data used by decodeFieldBytes */
     private int run;
@@ -209,17 +211,17 @@ public class P264ImageDecoder {
         int v, vg, vr;
         int r, g, b;
 
-        int lumaElementIndex1 = 0;
-        int lumaElementIndex2 = 0;
-        int chromaOffset = 0;
+        int lumaElementIndex1;
+        int lumaElementIndex2;
+        int chromaOffset;
 
-        int dataIndex1 = 0;
-        int dataIndex2 = 0;
+        int dataIndex1;
+        int dataIndex2;
 
-        int lumaElementValue1 = 0;
-        int lumaElementValue2 = 0;
-        int chromaBlueValue = 0;
-        int chromaRedValue = 0;
+        int lumaElementValue1;
+        int lumaElementValue2;
+        int chromaBlueValue;
+        int chromaRedValue;
 
         int x = 0;
 
@@ -260,51 +262,8 @@ public class P264ImageDecoder {
                             int deltaIndex = 2 * horizontalStep + pixel;
                             lumaElementValue1 = mbDBArr[lumaElementIndex1 + deltaIndex] << 8;
                             lumaElementValue2 = mbDBArr[lumaElementIndex2 + deltaIndex] << 8;
-                            x = lumaElementValue1 + vr;
-                            if (x < 0) {
-                                r = 0;
-                            } else {
-                                x >>= 8;
-                                r = (x > 0xFF) ? 0xFF : x;
-                            }
-                            x = lumaElementValue1 - uvg;
-                            if (x < 0) {
-                                g = 0;
-                            } else {
-                                x >>= 8;
-                                g = (x > 0xFF) ? 0xFF : x;
-                            }
-                            x = lumaElementValue1 + ub;
-                            if (x < 0) {
-                                b = 0;
-                            } else {
-                                x >>= 8;
-                                b = (x > 0xFF) ? 0xFF : x;
-                            }
-                            javaPixelData[dataIndex1 + pixelDataQuadrantOffsets[quadrant] + deltaIndex] = ((r << 16) | (g << 8) | b);
-
-                            x = lumaElementValue2 + vr;
-                            if (x < 0) {
-                                r = 0;
-                            } else {
-                                x >>= 8;
-                                r = (x > 0xFF) ? 0xFF : x;
-                            }
-                            x = lumaElementValue2 - uvg;
-                            if (x < 0) {
-                                g = 0;
-                            } else {
-                                x >>= 8;
-                                g = (x > 0xFF) ? 0xFF : x;
-                            }
-                            x = lumaElementValue2 + ub;
-                            if (x < 0) {
-                                b = 0;
-                            } else {
-                                x >>= 8;
-                                b = (x > 0xFF) ? 0xFF : x;
-                            }
-                            javaPixelData[dataIndex2 + pixelDataQuadrantOffsets[quadrant] + deltaIndex] = ((r << 16) | (g << 8) | b);
+                            a(ub, vr, dataIndex1, lumaElementValue1, pixelDataQuadrantOffsets, quadrant, uvg, deltaIndex);
+                            a(ub, vr, dataIndex2, lumaElementValue2, pixelDataQuadrantOffsets, quadrant, uvg, deltaIndex);
                         }
                     }
                 }
@@ -312,6 +271,35 @@ public class P264ImageDecoder {
 
             imageDataOffset += 16;
         }
+    }
+
+    private void a(int ub, int vr, int dataIndex2, int lumaElementValue2, int[] pixelDataQuadrantOffsets, int quadrant, int uvg, int deltaIndex) {
+        int x;
+        int r;
+        int g;
+        int b;
+        x = lumaElementValue2 + vr;
+        if (x < 0) {
+            r = 0;
+        } else {
+            x >>= 8;
+            r = Math.min(x, 0xFF);
+        }
+        x = lumaElementValue2 - uvg;
+        if (x < 0) {
+            g = 0;
+        } else {
+            x >>= 8;
+            g = Math.min(x, 0xFF);
+        }
+        x = lumaElementValue2 + ub;
+        if (x < 0) {
+            b = 0;
+        } else {
+            x >>= 8;
+            b = Math.min(x, 0xFF);
+        }
+        javaPixelData[dataIndex2 + pixelDataQuadrantOffsets[quadrant] + deltaIndex] = ((r << 16) | (g << 8) | b);
     }
 
     /*
@@ -350,7 +338,7 @@ public class P264ImageDecoder {
         //streamCode = peekStreamData(imageStream, 32);
 
         if ((streamFieldBitIndex > 0) && streamIndex < (imageStreamCapacity >> 2)) {
-            temp = ((imageStreamByteArray[streamIndex * 4 + 0] & 0xFF) |
+            temp = ((imageStreamByteArray[streamIndex * 4] & 0xFF) |
                     ((imageStreamByteArray[streamIndex * 4 + 1] & 0xFF) << 8) |
                     ((imageStreamByteArray[streamIndex * 4 + 2] & 0xFF) << 16) |
                     ((imageStreamByteArray[streamIndex * 4 + 3] & 0xFF) << 24));
@@ -468,7 +456,7 @@ public class P264ImageDecoder {
 
                 temp = streamCode >>> 1;                // take into account that last bit is sign,
                 // so shift it out of the way
-                temp += (int) (1 << (zeroCount - 1));   // - (3) -> calculate run value without sign
+                temp += 1 << (zeroCount - 1);   // - (3) -> calculate run value without sign
             }
 
             // sign = (sbyte)(streamCode & 1); // determine sign, last bit is sign
@@ -491,9 +479,7 @@ public class P264ImageDecoder {
         int zigZagPosition = 0;
         int matrixPosition = 0;
 
-        for (int i = 0; i < dataBlockBuffer.length; i++) {
-            dataBlockBuffer[i] = 0;
-        }
+        Arrays.fill(dataBlockBuffer, (short) 0);
 
         int dcCoefficientTemp = readStreamDataInt(10);
 
@@ -560,7 +546,7 @@ public class P264ImageDecoder {
                     dataBlockBuffer[pointer + 56] == 0) {
                 int dcValue = dataBlockBuffer[pointer] << PASS1_BITS;
 
-                workSpace[pointer + 0] = dcValue;
+                workSpace[pointer] = dcValue;
                 workSpace[pointer + 8] = dcValue;
                 workSpace[pointer + 16] = dcValue;
                 workSpace[pointer + 24] = dcValue;
@@ -615,7 +601,7 @@ public class P264ImageDecoder {
                 tmp2 += z2 + z3;
                 tmp3 += z1 + z4;
 
-                workSpace[pointer + 0] = ((tmp10 + tmp3 + (1 << F1)) >> F2);
+                workSpace[pointer] = ((tmp10 + tmp3 + (1 << F1)) >> F2);
                 workSpace[pointer + 56] = ((tmp10 - tmp3 + (1 << F1)) >> F2);
                 workSpace[pointer + 8] = ((tmp11 + tmp2 + (1 << F1)) >> F2);
                 workSpace[pointer + 48] = ((tmp11 - tmp2 + (1 << F1)) >> F2);
@@ -885,7 +871,7 @@ public class P264ImageDecoder {
 
                         if ((acCoefficientsTemp >>> 6 & 1) == 1) {
                             int quantizer_modeTemp = readStreamDataInt(2);
-                            quantizerMode = (int) ((quantizer_modeTemp < 2) ? ~quantizer_modeTemp : quantizer_modeTemp);
+                            quantizerMode = (quantizer_modeTemp < 2) ? ~quantizer_modeTemp : quantizer_modeTemp;
                         }
 
                         getBlockBytes(blockY0HasAcComponents);
@@ -930,14 +916,14 @@ public class P264ImageDecoder {
                     frameIndex = readStreamDataInt(32);
 
                     switch (pictureFormat) {
-                        case CIF:
+                        case CIF -> {
                             width = CIF_WIDTH << resolution - 1;
                             height = CIG_HEIGHT << resolution - 1;
-                            break;
-                        case QVGA:
+                        }
+                        case QVGA -> {
                             width = VGA_WIDTH << resolution - 1;
                             height = VGA_HEIGHT << resolution - 1;
-                            break;
+                        }
                     }
 
                     // We assume two bytes per pixel (RGB 565)
@@ -962,7 +948,7 @@ public class P264ImageDecoder {
         while (count > (32 - streamFieldBitIndex)) {
             data = data << (32 - streamFieldBitIndex) | (streamField >>> streamFieldBitIndex);
             count -= 32 - streamFieldBitIndex;
-            streamField = ((imageStreamByteArray[streamIndex * 4 + 0] & 0xFF) | ((imageStreamByteArray[streamIndex * 4 + 1] & 0xFF) << 8) |
+            streamField = ((imageStreamByteArray[streamIndex * 4] & 0xFF) | ((imageStreamByteArray[streamIndex * 4 + 1] & 0xFF) << 8) |
                     ((imageStreamByteArray[streamIndex * 4 + 2] & 0xFF) << 16) | ((imageStreamByteArray[streamIndex * 4 + 3] & 0xFF) << 24));
             streamFieldBitIndex = 0;
             streamIndex++;

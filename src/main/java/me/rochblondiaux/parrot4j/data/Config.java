@@ -1,8 +1,10 @@
 package me.rochblondiaux.parrot4j.data;
 
+import lombok.Data;
 import me.rochblondiaux.parrot4j.data.enums.ARDrone1VideoCodec;
 import me.rochblondiaux.parrot4j.data.enums.ARDrone2VideoCodec;
 
+@Data
 public final class Config {
     public static final int WAIT_TIMEOUT = 15;
     public static final int REACHABLE_TIMEOUT = 1000;
@@ -35,77 +37,5 @@ public final class Config {
     public Config(String applicationName, String profileName, int maxStartupRetries) {
         this.maxStartupRetries = maxStartupRetries;
         loginData = new LoginData(applicationName, profileName);
-    }
-
-    public LoginData getLoginData() {
-        return loginData;
-    }
-
-    public int getMaxStartupRetries() {
-        return maxStartupRetries;
-    }
-
-    public String getDroneIpAddress() {
-        return droneIpAddress;
-    }
-
-    public void setDroneIpAddress(String droneIpAddress) {
-        this.droneIpAddress = droneIpAddress;
-    }
-
-    public int getFtpPort() {
-        return ftpPort;
-    }
-
-    public void setFtpPort(int ftpPort) {
-        this.ftpPort = ftpPort;
-    }
-
-    public int getNavDataPort() {
-        return navDataPort;
-    }
-
-    public void setNavDataPort(int navDataPort) {
-        this.navDataPort = navDataPort;
-    }
-
-    public int getVideoDataPort() {
-        return videoDataPort;
-    }
-
-    public void setVideoDataPort(int videoDataPort) {
-        this.videoDataPort = videoDataPort;
-    }
-
-    public int getCommandPort() {
-        return commandPort;
-    }
-
-    public void setCommandPort(int commandPort) {
-        this.commandPort = commandPort;
-    }
-
-    public int getConfigDataPort() {
-        return configDataPort;
-    }
-
-    public void setConfigDataPort(int configDataPort) {
-        this.configDataPort = configDataPort;
-    }
-
-    public ARDrone1VideoCodec getArDrone1VideoCodec() {
-        return arDrone1VideoCodec;
-    }
-
-    public void setArDrone1VideoCodec(ARDrone1VideoCodec arDrone1VideoCodec) {
-        this.arDrone1VideoCodec = arDrone1VideoCodec;
-    }
-
-    public ARDrone2VideoCodec getArDrone2VideoCodec() {
-        return arDrone2VideoCodec;
-    }
-
-    public void setArDrone2VideoCodec(ARDrone2VideoCodec arDrone2VideoCodec) {
-        this.arDrone2VideoCodec = arDrone2VideoCodec;
     }
 }

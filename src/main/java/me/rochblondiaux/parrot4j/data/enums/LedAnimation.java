@@ -1,5 +1,10 @@
 package me.rochblondiaux.parrot4j.data.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter()
 public enum LedAnimation {
     BLINK_GREEN_RED(0),
     BLING_GREEN(1),
@@ -24,12 +29,4 @@ public enum LedAnimation {
     BLINK_STANDARD(20);
 
     private final int animationCode;
-
-    private LedAnimation(int animationCode) {
-        this.animationCode = animationCode;
-    }
-
-    public int getAnimationCode() {
-        return animationCode;
-    }
 }

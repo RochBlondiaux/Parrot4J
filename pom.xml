@@ -17,6 +17,14 @@
         <java.version>19</java.version>
     </properties>
 
+    <!-- Repositories -->
+    <repositories>
+        <repository>
+            <id>dcm5ch</id>
+            <url>https://www.dcm4che.org/maven2/</url>
+        </repository>
+    </repositories>
+
     <!-- Dependencies -->
     <dependencies>
         <!-- Guice -->
@@ -50,25 +58,55 @@
             <version>1.18.24</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Humble -->
+        <!-- Xuggle -->
         <dependency>
-            <groupId>io.humble</groupId>
-            <artifactId>humble-video-all</artifactId>
-            <version>0.3.0</version>
+            <groupId>xuggle</groupId>
+            <artifactId>xuggle-xuggler</artifactId>
+            <version>5.4</version>
         </dependency>
     </dependencies>
 
+    <!-- Deployment -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>cubecolony-snapshots</id>
+            <url>https://maven.cubecolony.net/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>cubecolony-releases</id>
+            <url>https://maven.cubecolony.net/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
+
     <!-- Build -->
     <build>
+        <finalName>${project.name}</finalName>
+        <defaultGoal>clean install</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

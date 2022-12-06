@@ -1,5 +1,10 @@
 package me.rochblondiaux.parrot4j.data.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public enum Camera {
     FRONT(0),
     BACK(1),
@@ -8,12 +13,4 @@ public enum Camera {
     NEXT(4);
 
     private final int cameraCode;
-
-    Camera(int cameraCode) {
-        this.cameraCode = cameraCode;
-    }
-
-    public int getCameraCode() {
-        return cameraCode;
-    }
 }

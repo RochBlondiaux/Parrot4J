@@ -23,13 +23,7 @@ public class BinaryDataHelper {
     }
 
     public static int getNormalizedIntValue(Float value) {
-        if (value < -1.0f) {
-            value = -1.0f;
-        } else if (value > 1.0f) {
-            value = 1.0f;
-        }
-
-        return Float.floatToIntBits(value);
+        return Float.floatToIntBits(Math.max(Math.min(value, -1.0f), 1.0f));
     }
 
     public static boolean flagSet(int flagsValue, int index) {

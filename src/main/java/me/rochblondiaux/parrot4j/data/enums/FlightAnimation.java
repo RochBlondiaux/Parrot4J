@@ -1,5 +1,10 @@
 package me.rochblondiaux.parrot4j.data.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public enum FlightAnimation {
     PHI_M30_DEG(0, 1000),
     PHI_30_DEG(1, 1000),
@@ -25,17 +30,4 @@ public enum FlightAnimation {
     private final int commandCode;
 
     private final int timeout;
-
-    private FlightAnimation(int commandCode, int timeout) {
-        this.commandCode = commandCode;
-        this.timeout = timeout;
-    }
-
-    public int getCommandCode() {
-        return commandCode;
-    }
-
-    public int getTimeout() {
-        return timeout;
-    }
 }

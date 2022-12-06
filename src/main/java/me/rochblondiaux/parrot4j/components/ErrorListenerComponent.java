@@ -1,32 +1,25 @@
 package me.rochblondiaux.parrot4j.components;
 
 import com.google.common.collect.Sets;
+import lombok.NoArgsConstructor;
 import me.rochblondiaux.parrot4j.listeners.ErrorListener;
 
 import java.util.Set;
 
+@NoArgsConstructor
 public class ErrorListenerComponent {
-    private final Set<ErrorListener> errorListeners;
-
-    public ErrorListenerComponent() {
-        errorListeners = Sets.newHashSet();
-    }
+    private final Set<ErrorListener> errorListeners = Sets.newHashSet();
 
     public void addErrorListener(ErrorListener errorListener) {
-        if (!errorListeners.contains(errorListener)) {
-            errorListeners.add(errorListener);
-        }
+        errorListeners.add(errorListener);
     }
 
     public void removeErrorListener(ErrorListener errorListener) {
-        if (errorListeners.contains(errorListener)) {
-            errorListeners.remove(errorListener);
-        }
+        errorListeners.remove(errorListener);
     }
 
     public void emitError(Throwable e) {
-        for (ErrorListener listener : errorListeners) {
+        for (ErrorListener listener : errorListeners)
             listener.onError(e);
-        }
     }
 }

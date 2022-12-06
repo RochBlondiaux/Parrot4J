@@ -1,6 +1,7 @@
 package me.rochblondiaux.parrot4j.components;
 
-import org.apache.log4j.Logger;
+
+import lombok.extern.log4j.Log4j2;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,21 +10,16 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 
+@Log4j2
 public class TcpComponent {
     private static final byte[] KEEP_ALIVE_BYTES = new byte[]{0x01, 0x00, 0x00, 0x00};
-
     private static final int DEFAULT_TIMEOUT = 3000;
 
-    private final Logger logger = Logger.getLogger(UdpComponent.class);
 
     private Socket socket = null;
-
     private InetAddress address;
-
     private int port;
-
     private int timeout;
-
     private BufferedReader reader = null;
 
     public void connect(InetAddress address, int port) {
@@ -40,7 +36,7 @@ public class TcpComponent {
             socket.setSoTimeout(timeout);
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
-            throw new IllegalStateException(String.format("Error while connecting to TCP socket %s:%d", address.getHostName(), port), e);
+            throw new IllegalStateException("Error while connecting to TCP socket %s:%d".formatted(address.getHostName(), port), e);
         }
     }
 
@@ -59,7 +55,7 @@ public class TcpComponent {
         try {
             disconnect();
         } catch (Exception e) {
-            logger.error(String.format("Error while disconnecting from port %d", port), e);
+            log.error("Error while disconnecting from port %d".formatted(port), e);
         }
 
         connect(address, port, timeout);

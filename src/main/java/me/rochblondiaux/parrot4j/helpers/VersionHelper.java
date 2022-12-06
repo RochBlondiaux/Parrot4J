@@ -12,9 +12,8 @@ public class VersionHelper {
 
         if (i < versionValues1.length && i < versionValues2.length) {
             int diff = Integer.valueOf(versionValues1[i]).compareTo(Integer.valueOf(versionValues2[i]));
-            return diff < 0 ? -1 : diff == 0 ? 0 : 1;
+            return Integer.compare(diff, 0);
         }
-
-        return versionValues1.length < versionValues2.length ? -1 : versionValues1.length == versionValues2.length ? 0 : 1;
+        return Integer.compare(versionValues1.length, versionValues2.length);
     }
 }

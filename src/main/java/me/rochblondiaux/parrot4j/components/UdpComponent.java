@@ -8,13 +8,9 @@ import java.net.SocketException;
 
 public class UdpComponent {
     private static final byte[] KEEP_ALIVE_BYTES = new byte[]{0x01, 0x00, 0x00, 0x00};
-
     private DatagramPacket keepAlivePacket;
-
     private DatagramSocket socket;
-
     private InetAddress address;
-
     private int port;
 
     public void connect(InetAddress address, int port) {

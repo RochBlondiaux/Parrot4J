@@ -21,7 +21,7 @@ public class FlightMoveCommand extends ATCommandAbstract {
 
     @Override
     protected String getCommand(int sequenceNumber) {
-        return String.format("AT*PCMD=%d,%d,%d,%d,%d,%d", sequenceNumber, 1, getNormalizedIntValue(roll), getNormalizedIntValue(pitch),
+        return "AT*PCMD=%d,%d,%d,%d,%d,%d".formatted(sequenceNumber, 1, getNormalizedIntValue(roll), getNormalizedIntValue(pitch),
                 getNormalizedIntValue(gaz), getNormalizedIntValue(yaw));
     }
 }

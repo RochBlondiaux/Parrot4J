@@ -29,14 +29,14 @@ public class SetConfigValueATCommand extends ATCommandAbstract {
 
     @Override
     protected String getPreparationCommand(int sequenceNumber) {
-        return String.format("AT*CONFIG_IDS=%d,\"%s\",\"%s\",\"%s\"", sequenceNumber, loginData.getSessionChecksum(), loginData.getProfileChecksum(),
+        return "AT*CONFIG_IDS=%d,\"%s\",\"%s\",\"%s\"".formatted(sequenceNumber, loginData.getSessionChecksum(), loginData.getProfileChecksum(),
                 loginData.getApplicationChecksum());
     }
 
     @Override
     protected String getCommand(int sequenceNumber) {
         checkState(key != null && value != null, "Cannot get the command text with no key or value set");
-        return String.format("AT*CONFIG=%d,\"%s\",\"%s\"", sequenceNumber, key, value);
+        return "AT*CONFIG=%d,\"%s\",\"%s\"".formatted(sequenceNumber, key, value);
     }
 
     @Override

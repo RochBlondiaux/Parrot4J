@@ -7,6 +7,6 @@ public class WatchDogCommand extends ATCommandAbstract {
 
     @Override
     protected String getCommand(int sequenceNumber) {
-        return String.format("AT*COMWDG=%d", sequenceNumber);
+        return "AT*COMWDG=%d".formatted(sequenceNumber);
     }
 }
