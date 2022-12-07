@@ -1,10 +1,8 @@
 package me.rochblondiaux.parrot4j.api.driver;
 
-
-import me.rochblondiaux.parrot4j.api.drone.Drone;
-import me.rochblondiaux.parrot4j.api.drone.DroneModel;
-
-import java.util.Set;
+import me.rochblondiaux.parrot4j.api.drone.controller.DroneController;
+import me.rochblondiaux.parrot4j.api.drone.factory.DroneFactory;
+import me.rochblondiaux.parrot4j.api.drone.model.Drone;
 
 /**
  * Parrot4J
@@ -12,20 +10,9 @@ import java.util.Set;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-public interface DroneDriver {
+public interface DroneDriver<D extends Drone> {
 
-    /**
-     * Get the drone model.
-     *
-     * @return The drone model.
-     */
-    Set<DroneModel> supportedModels();
+    DroneFactory<D> factory();
 
-    /**
-     * Get the drone factory.
-     *
-     * @param <D> The drone type.
-     * @return The drone factory.
-     */
-    <D extends Drone> DroneFactory<D> factory();
+    DroneController controller();
 }
