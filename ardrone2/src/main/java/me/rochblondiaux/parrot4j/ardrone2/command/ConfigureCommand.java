@@ -1,6 +1,6 @@
 package me.rochblondiaux.parrot4j.ardrone2.command;
 
-import me.rochblondiaux.parrot4j.ardrone2.model.ConfigurationKeys;
+import me.rochblondiaux.parrot4j.ardrone2.util.ConfigurationKeys;
 
 /**
  * Parrot4J

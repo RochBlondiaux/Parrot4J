@@ -1,6 +1,6 @@
 package me.rochblondiaux.parrot4j.ardrone2.command;
 
-import me.rochblondiaux.parrot4j.ardrone2.model.DroneLedAnimation;
+import me.rochblondiaux.parrot4j.ardrone2.model.animation.DroneLedAnimation;
 
 /**
  * Parrot4J

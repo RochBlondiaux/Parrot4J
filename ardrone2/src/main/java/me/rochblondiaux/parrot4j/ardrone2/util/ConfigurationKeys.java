@@ -1,4 +1,4 @@
-package me.rochblondiaux.parrot4j.ardrone2.model;
+package me.rochblondiaux.parrot4j.ardrone2.util;
 
 import lombok.RequiredArgsConstructor;
 
