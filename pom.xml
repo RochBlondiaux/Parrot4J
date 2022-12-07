@@ -5,10 +5,16 @@
     <groupId>me.rochblondiaux</groupId>
     <artifactId>parrot4j</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>Parrot4J</name>
     <url>https://www.roch-blondiaux.com</url>
+
+    <!-- Modules -->
+    <modules>
+        <module>api</module>
+        <module>ardrone2</module>
+    </modules>
 
     <!-- Properties -->
     <properties>
@@ -46,12 +52,6 @@
             <version>1.18.24</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Xuggle -->
-        <dependency>
-            <groupId>xuggle</groupId>
-            <artifactId>xuggle-xuggler</artifactId>
-            <version>5.4</version>
-        </dependency>
         <!-- Jetbrains Annotations -->
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -71,37 +71,4 @@
             <url>https://maven.cubecolony.net/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
-
-    <!-- Build -->
-    <build>
-        <finalName>${project.name}</finalName>
-        <defaultGoal>clean install</defaultGoal>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
