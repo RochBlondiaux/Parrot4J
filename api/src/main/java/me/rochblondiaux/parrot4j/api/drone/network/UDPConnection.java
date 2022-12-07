@@ -32,6 +32,7 @@ public class UDPConnection extends AbstractConnection {
             try {
                 socket = new DatagramSocket(port);
                 socket.setSoTimeout(3000);
+                this.connected = true;
             } catch (SocketException e) {
                 throw new IllegalStateException(e);
             }
@@ -42,6 +43,7 @@ public class UDPConnection extends AbstractConnection {
 
     @Override
     public void disconnect() {
+        this.connected = false;
         socket.disconnect();
         socket = null;
     }

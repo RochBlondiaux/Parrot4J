@@ -39,6 +39,7 @@ public class TCPConnection extends AbstractConnection {
                 socket = new Socket(address, port);
                 socket.setSoTimeout(timeout);
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                this.connected = true;
                 return null;
             } catch (IOException e) {
                 throw new IllegalStateException(String.format("Error while connecting to TCP socket %s:%d", address.getHostName(), port), e);
@@ -51,6 +52,7 @@ public class TCPConnection extends AbstractConnection {
     public void disconnect() {
         try {
             socket.close();
+            this.connected = false;
 
             socket = null;
             reader = null;

@@ -1,8 +1,5 @@
 package me.rochblondiaux.parrot4j.api.drone.network;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.net.InetAddress;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -11,20 +8,9 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-public interface DroneConnection {
-
-
-    CompletableFuture<Void> connect();
+public interface DroneConnection extends NetworkConnection {
 
     CompletableFuture<Void> reconnect(int delay);
 
     void sendKeepAlivePacket();
-
-    void disconnect();
-
-    @NotNull InetAddress address();
-
-    int port();
-
-    boolean isConnected();
 }
