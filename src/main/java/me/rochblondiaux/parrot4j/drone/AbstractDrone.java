@@ -1,7 +1,6 @@
 package me.rochblondiaux.parrot4j.drone;
 
 import lombok.RequiredArgsConstructor;
-import me.rochblondiaux.parrot4j.Drone;
 import me.rochblondiaux.parrot4j.drone.movements.Location;
 import me.rochblondiaux.parrot4j.drone.movements.Rotation;
 import me.rochblondiaux.parrot4j.drone.movements.Speed;

@@ -1,6 +1,6 @@
-package me.rochblondiaux.parrot4j;
+package me.rochblondiaux.parrot4j.drone;
 
-import me.rochblondiaux.parrot4j.drone.DroneModel;
+import me.rochblondiaux.parrot4j.controller.DroneController;
 import me.rochblondiaux.parrot4j.drone.movements.Location;
 import me.rochblondiaux.parrot4j.drone.movements.Rotation;
 import me.rochblondiaux.parrot4j.drone.movements.Speed;
@@ -19,7 +19,8 @@ public interface Drone {
 
     String name();
 
-    boolean online();
+    DroneController controller();
+
 
     /* Version */
     DroneModel model();
@@ -29,6 +30,8 @@ public interface Drone {
     String hardwareVersion();
 
     /* Status */
+    boolean online();
+
     byte batteryLevel();
 
     void batteryLevel(byte batteryLevel);
