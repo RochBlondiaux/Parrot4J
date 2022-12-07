@@ -21,7 +21,6 @@ public interface Drone {
 
     DroneController controller();
 
-
     /* Version */
     DroneModel model();
 
@@ -30,6 +29,10 @@ public interface Drone {
     String hardwareVersion();
 
     /* Status */
+    boolean isOutdoor();
+
+    boolean hasHull();
+
     boolean online();
 
     byte batteryLevel();

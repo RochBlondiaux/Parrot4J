@@ -1,6 +1,7 @@
 package me.rochblondiaux.parrot4j.drone;
 
 import lombok.RequiredArgsConstructor;
+import me.rochblondiaux.parrot4j.controller.DroneController;
 import me.rochblondiaux.parrot4j.drone.movements.Location;
 import me.rochblondiaux.parrot4j.drone.movements.Rotation;
 import me.rochblondiaux.parrot4j.drone.movements.Speed;
@@ -24,6 +25,9 @@ public abstract class AbstractDrone implements Drone {
     protected final DroneModel model;
     protected final String firmwareVersion;
     protected final String hardwareVersion;
+    protected final DroneController controller;
+    protected boolean outdoor;
+    protected boolean hull;
 
     protected byte batteryLevel;
     protected boolean online;
@@ -149,5 +153,20 @@ public abstract class AbstractDrone implements Drone {
     @Override
     public void location(Location location) {
         this.location = location;
+    }
+
+    @Override
+    public boolean isOutdoor() {
+        return outdoor;
+    }
+
+    @Override
+    public boolean hasHull() {
+        return hull;
+    }
+
+    @Override
+    public DroneController controller() {
+        return controller;
     }
 }
