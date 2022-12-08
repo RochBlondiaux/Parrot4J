@@ -12,17 +12,17 @@ public class PlayLedAnimationCommand extends ATCommand {
 
     private final LedAnimation animation;
     private final float frequency;
-    private final int duration;
+    private final int durationInSecs;
 
-    public PlayLedAnimationCommand(LedAnimation animation, float frequency, int duration) {
-        super("LED", true);
+    public PlayLedAnimationCommand(LedAnimation animation, float frequency, int durationInSecs) {
+        super("LED", durationInSecs * 1000);
         this.animation = animation;
         this.frequency = frequency;
-        this.duration = duration;
+        this.durationInSecs = durationInSecs;
     }
 
     @Override
     protected String build(int sequence) {
-        return "%d,%d,%d,%d".formatted(sequence, animation.getId(), intOfFloat(frequency), duration);
+        return "%d,%d,%d,%d".formatted(sequence, animation.getId(), intOfFloat(frequency), durationInSecs);
     }
 }

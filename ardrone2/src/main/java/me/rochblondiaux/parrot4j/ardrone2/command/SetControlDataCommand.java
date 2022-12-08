@@ -14,7 +14,7 @@ public class SetControlDataCommand extends ATCommand {
     private final int parameter2;
 
     public SetControlDataCommand(ControlDataMode mode, int parameter2) {
-        super("CTRL", false);
+        super("CTRL", mode.getDuration());
         this.mode = mode;
         this.parameter2 = parameter2;
     }

@@ -8,13 +8,13 @@ import me.rochblondiaux.parrot4j.ardrone2.model.DroneAnimation;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-public class PlayAnimationCommand extends ATCommand{
+public class PlayAnimationCommand extends ATCommand {
 
     private final DroneAnimation animation;
     private final int duration;
 
     public PlayAnimationCommand(DroneAnimation animation, int duration) {
-        super("ANIM", false);
+        super("ANIM", animation.getDuration());
         this.animation = animation;
         this.duration = duration;
     }

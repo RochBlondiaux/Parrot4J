@@ -15,7 +15,7 @@ public class UpdateConfigurationCommand extends ATCommand {
     private final String value;
 
     public UpdateConfigurationCommand(@NotNull ConfigurationKeys key, @NotNull Object value) {
-        super("CONFIG", true);
+        super("CONFIG", true, 100);
         this.key = key.key();
         this.value = value.toString();
     }

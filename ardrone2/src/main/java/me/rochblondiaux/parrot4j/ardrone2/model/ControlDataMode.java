@@ -10,11 +10,13 @@ import lombok.RequiredArgsConstructor;
  * @author Roch Blondiaux (Kiwix).
  */
 @RequiredArgsConstructor
+@Getter
 public enum ControlDataMode {
-    IDLE(0),
-    GET_CONFIGURATION_DATA(4),
-    RESET_ACK_FLAG(5);
+    IDLE(0, -1),
+    GET_CONFIGURATION_DATA(4, 100),
+    RESET_ACK_FLAG(5, 1250);
 
-    @Getter
     private final int controlModeCode;
+    private final int duration;
+
 }

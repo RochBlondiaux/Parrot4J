@@ -1,5 +1,6 @@
 package me.rochblondiaux.parrot4j.ardrone2.controller;
 
+import lombok.RequiredArgsConstructor;
 import me.rochblondiaux.parrot4j.api.drone.controller.DroneController;
 import me.rochblondiaux.parrot4j.api.model.Location;
 import me.rochblondiaux.parrot4j.api.model.Rotation;
@@ -13,7 +14,11 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author Roch Blondiaux (Kiwix).
  */
+@RequiredArgsConstructor
 public class Ar2Controller implements DroneController {
+
+    private final CommandSender sender;
+
     @Override
     public CompletableFuture<Void> initialize() {
         return null;

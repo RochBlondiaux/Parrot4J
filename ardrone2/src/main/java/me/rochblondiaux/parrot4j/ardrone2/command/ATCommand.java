@@ -18,20 +18,31 @@ public abstract class ATCommand {
     private final String name;
     @Getter
     private final boolean authenticationNeeded;
+    @Getter
+    private final int timeOfExecution;
     private final FloatBuffer floatBuffer;
     private final IntBuffer intBuffer;
 
-    public ATCommand(String name, boolean authenticationNeeded) {
+    public ATCommand(String name, boolean authenticationNeeded, int timeOfExecution) {
         this.name = name;
         this.authenticationNeeded = authenticationNeeded;
+        this.timeOfExecution = timeOfExecution;
 
         final ByteBuffer bb = ByteBuffer.allocate(4);
         this.floatBuffer = bb.asFloatBuffer();
         this.intBuffer = bb.asIntBuffer();
     }
 
+    public ATCommand(String name, boolean authenticationNeeded) {
+        this(name, authenticationNeeded, 0);
+    }
+
+    public ATCommand(String name, int timeOfExecution) {
+        this(name, false, timeOfExecution);
+    }
+
     public ATCommand(String name) {
-        this(name, false);
+        this(name, false, -1);
     }
 
     /**

@@ -63,7 +63,7 @@ public class CommandSender {
                     Thread.sleep(100);
                     continue;
                 }
-                sendCommand(command);
+                sendCommand(command).join();
                 Thread.sleep(15);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -71,10 +71,19 @@ public class CommandSender {
         }
     }
 
-    public void sendCommand(@NotNull ATCommand command) {
-        if (command.isAuthenticationNeeded())
-            sendCommand(new AuthenticationCommand(authenticationData));
-        sendTextCommand(command.buildText(nextSequence()));
+    public CompletableFuture<Void> sendCommand(@NotNull ATCommand command) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (command.isAuthenticationNeeded())
+                sendCommand(new AuthenticationCommand(authenticationData));
+            sendTextCommand(command.buildText(nextSequence()));
+            if (command.getTimeOfExecution() > 0)
+                try {
+                    Thread.sleep(command.getTimeOfExecution());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            return null;
+        });
     }
 
     public void sendTextCommand(@NotNull String commandText) {
