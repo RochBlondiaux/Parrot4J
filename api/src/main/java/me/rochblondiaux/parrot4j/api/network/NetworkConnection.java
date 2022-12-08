@@ -17,6 +17,8 @@ public interface NetworkConnection {
 
     CompletableFuture<Void> disconnect();
 
+    void sendKeepAlivePacket();
+
     boolean isConnected();
 
     InetSocketAddress address();
