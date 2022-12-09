@@ -2,15 +2,15 @@ package me.rochblondiaux.parrot4j.ardrone2.data;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import me.rochblondiaux.parrot4j.api.event.EventService;
 import me.rochblondiaux.parrot4j.api.network.UDPConnection;
 import me.rochblondiaux.parrot4j.ardrone2.Ar2Drone;
 import me.rochblondiaux.parrot4j.ardrone2.controller.Ar2Controller;
+import me.rochblondiaux.parrot4j.ardrone2.events.DroneDataUpdateEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Parrot4J
@@ -29,7 +29,6 @@ public class DataUpdater extends Thread {
     private final Ar2Drone drone;
     @Getter
     private DroneData data;
-    private final List<DataUpdateListener> listeners = new ArrayList<>();
 
 
     public DataUpdater(@NotNull Ar2Controller controller) {
@@ -78,7 +77,7 @@ public class DataUpdater extends Thread {
             if (this.data == null)
                 return;
             log.trace("Received nav data - battery level: {} percent, altitude: {}", data.battery(), data.altitude());
-            listeners.forEach(droneDataConsumer -> droneDataConsumer.onDataUpdate(data));
+            EventService.call(new DroneDataUpdateEvent(drone, data));
             drone.data(this.data);
         } catch (RuntimeException ignored) {
         }
@@ -91,9 +90,5 @@ public class DataUpdater extends Thread {
             throw new RuntimeException(e);
         }
         connection.sendKeepAlivePacket();
-    }
-
-    public void addListener(DataUpdateListener listener) {
-        listeners.add(listener);
     }
 }
