@@ -55,4 +55,8 @@ public abstract class ATCommand implements Command {
     public @Nullable String preparationCommandText(int sequenceNumber) {
         return null;
     }
+
+    public boolean hasPreparationCommand() {
+        return preparationCommandText(-1) != null;
+    }
 }

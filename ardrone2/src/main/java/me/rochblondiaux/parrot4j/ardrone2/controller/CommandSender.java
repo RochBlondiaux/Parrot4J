@@ -9,6 +9,7 @@ import me.rochblondiaux.parrot4j.ardrone2.Ar2Drone;
 import me.rochblondiaux.parrot4j.ardrone2.command.ATCommand;
 import me.rochblondiaux.parrot4j.ardrone2.command.Command;
 import me.rochblondiaux.parrot4j.ardrone2.command.ComposedCommand;
+import me.rochblondiaux.parrot4j.ardrone2.command.simple.WatchdogResetCommand;
 import me.rochblondiaux.parrot4j.ardrone2.model.AuthenticationData;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,7 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 /**
@@ -37,6 +39,7 @@ public class CommandSender extends StatefulService {
     private int sequence;
     @Setter
     private Ar2Controller controller;
+    private final AtomicInteger CMDS_COUNT = new AtomicInteger(0);
 
     public CommandSender(ClientOptions options) {
         this.connection = new UDPConnection(new InetSocketAddress(options.address(), options.ports().commands()));
@@ -63,6 +66,8 @@ public class CommandSender extends StatefulService {
 
     public void queue(Command command) {
         queue.add(command);
+        if (CMDS_COUNT.getAndIncrement() % 10 == 0)
+            queue.add(new WatchdogResetCommand());
     }
 
     public int queuedCommands() {
@@ -77,7 +82,7 @@ public class CommandSender extends StatefulService {
                     Thread.sleep(100);
                     continue;
                 }
-                sendCommand(command).join();
+                executeCommand(command).join();
                 Thread.sleep(15);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -85,38 +90,52 @@ public class CommandSender extends StatefulService {
         }
     }
 
-    public CompletableFuture<Void> sendCommand(@NotNull Function<AuthenticationData, Command> supplier) {
-        return sendCommand(supplier.apply(authenticationData));
+    public void send(@NotNull Function<AuthenticationData, Command> supplier) {
+        queue(supplier.apply(authenticationData));
     }
 
-    public CompletableFuture<Void> sendCommand(@NotNull Command command) {
+    public void send(@NotNull Command command) {
+        queue(command);
+    }
+
+    private CompletableFuture<Void> executeCommand(@NotNull Command command) {
         return CompletableFuture.supplyAsync(() -> {
             if (!connection.isConnected()) {
                 this.queue(command);
                 log.warn("Connection is not ready, command queued");
                 return null;
             }
-            final Ar2Drone drone = controller.getDrone();
-            int tries = 0;
-            while (tries++ < MAX_RETRIES) {
-                if (command instanceof ATCommand atCommand)
-                    sendTextCommand(atCommand.buildText(sequence));
-                else if (command instanceof ComposedCommand composedCommand) {
-                    for (Command c : composedCommand.commands())
-                        sendCommand(c).join();
-                }
+            if (command instanceof ATCommand atCommand) {
+                if (atCommand.hasPreparationCommand())
+                    sendTextCommand(atCommand.preparationCommandText(nextSequence()));
+                sendTextCommand(atCommand.buildText(nextSequence()));
+                exec(command);
+            } else if (command instanceof ComposedCommand composedCommand) {
+                for (Command c : composedCommand.commands())
+                    send(c);
+            }
+            return null;
+        });
+    }
 
+    private void exec(Command command) {
+        final Ar2Drone drone = controller.getDrone();
+        final AtomicInteger tries = new AtomicInteger(0);
+        CompletableFuture.runAsync(() -> {
+            while (tries.getAndIncrement() < MAX_RETRIES) {
                 try {
                     if (command.timeout() > 0)
                         Thread.sleep(command.timeout());
-                    Thread.sleep(10);
-                    if (command.isSuccessful(drone.data(), drone.configuration()))
-                        return null;
+                    if (command.isSuccessful(drone.data(), drone.configuration())) {
+                        log.debug("Command {} executed successfully!", command.getClass().getSimpleName());
+                        return;
+                    }
+                    executeCommand(command).join();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
-            throw new RuntimeException("Command failed after " + MAX_RETRIES + " tries");
+            log.error("Command {} failed after {} tries!", command.getClass().getSimpleName(), MAX_RETRIES);
         });
     }
 

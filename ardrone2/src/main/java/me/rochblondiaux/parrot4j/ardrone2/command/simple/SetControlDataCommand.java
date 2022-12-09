@@ -1,5 +1,6 @@
 package me.rochblondiaux.parrot4j.ardrone2.command.simple;
 
+import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.parrot4j.ardrone2.command.ATCommand;
 import me.rochblondiaux.parrot4j.ardrone2.configuration.DroneConfiguration;
 import me.rochblondiaux.parrot4j.ardrone2.data.DroneData;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Roch Blondiaux (Kiwix).
  */
+@Log4j2
 public class SetControlDataCommand extends ATCommand {
 
     private final ControlDataMode controlDataMode;
@@ -47,6 +49,7 @@ public class SetControlDataCommand extends ATCommand {
         return switch (controlDataMode) {
             case RESET_ACK_FLAG -> data != null && data.state().controlReceived();
             case GET_CONFIGURATION_DATA -> configuration != null;
+
             default -> true;
         };
     }

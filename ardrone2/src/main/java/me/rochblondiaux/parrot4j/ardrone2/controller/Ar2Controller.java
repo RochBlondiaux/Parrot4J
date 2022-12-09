@@ -58,31 +58,37 @@ public class Ar2Controller implements DroneController {
 
     @Override
     public CompletableFuture<Void> initialize() {
-        // Services
-        this.configurationUpdater.start();
-        this.dataUpdater.start();
-        this.sender.start();
+        return CompletableFuture.supplyAsync(() -> {
+            // Services
+            this.configurationUpdater.start();
+            this.dataUpdater.start();
+            this.sender.start();
 
-        // Listeners
-        EventService.addListener(DroneDataUpdateEvent.class, event -> drone.data(event.data()));
+            // Listeners
+            EventService.addListener(DroneDataUpdateEvent.class, event -> drone.data(event.data()));
 
-        // Init commands
-        return sender.sendCommand(data -> new InitConfigurationCommand(data, VideoCodec.H264_720P));
+            // Init commands
+            sender.send(data -> new InitConfigurationCommand(data, VideoCodec.H264_720P));
+            return null;
+        });
     }
 
     @Override
     public CompletableFuture<Void> takeOff() {
-        return sender.sendCommand(new FlightModeCommand(FlightMode.TAKE_OFF));
+        sender.send(new FlightModeCommand(FlightMode.TAKE_OFF));
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> land() {
-        return sender.sendCommand(new FlightModeCommand(FlightMode.LAND));
+        sender.send(new FlightModeCommand(FlightMode.LAND));
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> emergency() {
-        return sender.sendCommand(new FlightModeCommand(FlightMode.EMERGENCY));
+        sender.send(new FlightModeCommand(FlightMode.EMERGENCY));
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
@@ -102,7 +108,9 @@ public class Ar2Controller implements DroneController {
 
     @Override
     public CompletableFuture<Void> rotate(@NotNull Rotation rotation, float gas) {
-        return sender.sendCommand(new FlightMoveCommand(rotation, gas));
+        sender.send(new FlightMoveCommand(rotation, gas));
+        return CompletableFuture.completedFuture(null);
+
     }
 
     @Override
@@ -117,7 +125,8 @@ public class Ar2Controller implements DroneController {
 
     @Override
     public CompletableFuture<Void> flatTrim() {
-        return sender.sendCommand(new FlatTrimCommand());
+        sender.send(new FlatTrimCommand());
+        return CompletableFuture.completedFuture(null);
     }
 
     public CompletableFuture<Boolean> isCompatible() {
