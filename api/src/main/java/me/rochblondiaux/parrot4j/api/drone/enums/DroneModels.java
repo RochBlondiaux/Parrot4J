@@ -12,6 +12,7 @@ import me.rochblondiaux.parrot4j.api.drone.model.DroneModel;
 @RequiredArgsConstructor
 public enum DroneModels implements DroneModel {
     AR_DRONE_2("AR", 2),
+    AR_DRONE_1("AR", 1),
     ;
 
     private final String name;

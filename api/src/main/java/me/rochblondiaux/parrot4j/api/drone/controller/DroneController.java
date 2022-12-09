@@ -75,7 +75,7 @@ public interface DroneController {
      * @param rotation The rotation to move to.
      * @return A {@link CompletableFuture} that will be completed when the drone has rotated.
      */
-    CompletableFuture<Void> rotate(@NotNull Rotation rotation);
+    CompletableFuture<Void> rotate(@NotNull Rotation rotation, float gas);
 
     /**
      * Cancel the current movement.
@@ -85,13 +85,11 @@ public interface DroneController {
     CompletableFuture<Void> cancelMovement();
 
     /**
-     * Calibrates the drone when on the ground
+     * Calibrates the drone when it is flying.
      *
-     * @param outdoor True if the drone is outside, false otherwise.
-     * @param hull    True if the drone has a hull, false otherwise.
      * @return A {@link CompletableFuture} that will be completed when the drone has been calibrated.
      */
-    CompletableFuture<Void> calibrate(boolean outdoor, boolean hull);
+    CompletableFuture<Void> calibrate();
 
     /**
      * Calibrates the drone when on the ground with the current settings.

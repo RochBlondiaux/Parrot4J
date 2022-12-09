@@ -14,10 +14,18 @@ import java.util.concurrent.CompletableFuture;
  * @author Roch Blondiaux (Kiwix).
  */
 @Builder
-public record Client<D extends Drone>(DroneDriver<D> driver, ClientOptions options, Drone drone) {
+public class Client<D extends Drone> {
+
+    private final DroneDriver<D> driver;
+    private final ClientOptions options;
+    private final D drone;
+    private final DroneController controller;
 
     public Client(DroneDriver<D> driver, ClientOptions options) {
-        this(driver, options, driver.factory().make(options.address()));
+        this.driver = driver;
+        this.options = options;
+        this.drone = driver.factory(options).make(options.address());
+        this.controller = driver.controller(options, drone);
     }
 
     public CompletableFuture<D> connect() {
@@ -25,15 +33,19 @@ public record Client<D extends Drone>(DroneDriver<D> driver, ClientOptions optio
         return null;
     }
 
-    public CompletableFuture<Void> disconnect() {
-        return null;
+    public void disconnect() {
+        controller.disconnect();
     }
 
     public boolean isConnected() {
         return drone.online();
     }
 
+    public D drone() {
+        return drone;
+    }
+
     public DroneController controller() {
-        return driver.controller();
+        return controller;
     }
 }

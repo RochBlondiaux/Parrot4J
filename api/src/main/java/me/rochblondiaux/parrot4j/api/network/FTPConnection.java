@@ -28,6 +28,7 @@ public class FTPConnection {
     private BufferedReader reader;
     @Getter
     private boolean connected;
+    private static final String FTP_PATH = "ftp://%s:%d/%s";
 
 
     public FTPConnection(InetSocketAddress address) {
@@ -42,7 +43,7 @@ public class FTPConnection {
     public CompletableFuture<Void> connect(@NotNull String path) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                URL url = new URL(path);
+                URL url = new URL(FTP_PATH.formatted(address.getHostString(), address.getPort(), path));
                 connection = url.openConnection();
                 inputStream = connection.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(inputStream));

@@ -1,6 +1,10 @@
 package me.rochblondiaux.parrot4j.ardrone2.model;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Parrot4J
@@ -68,5 +72,11 @@ public enum ConfigurationKeys {
 
     public String key() {
         return String.format("%s:%s", configClass, key);
+    }
+
+    public static Optional<ConfigurationKeys> from(@NotNull String key) {
+        return Arrays.stream(values())
+                .filter(configurationKeys -> configurationKeys.key().equals(key))
+                .findFirst();
     }
 }

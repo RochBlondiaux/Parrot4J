@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -69,6 +70,12 @@ public class CommandSender {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public CompletableFuture<Void> sendCommands(@NotNull ATCommand... commands) {
+        return CompletableFuture.allOf(Arrays.stream(commands)
+                .map(this::sendCommand)
+                .toArray(CompletableFuture[]::new));
     }
 
     public CompletableFuture<Void> sendCommand(@NotNull ATCommand command) {
