@@ -1,6 +1,5 @@
 package me.rochblondiaux.parrot4j.api.client;
 
-import lombok.Builder;
 import me.rochblondiaux.parrot4j.api.driver.DroneDriver;
 import me.rochblondiaux.parrot4j.api.drone.controller.DroneController;
 import me.rochblondiaux.parrot4j.api.drone.model.Drone;
@@ -13,13 +12,12 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-@Builder
 public class Client<D extends Drone> {
 
     private final DroneDriver<D> driver;
     private final ClientOptions options;
-    private final D drone;
     private final DroneController controller;
+    private final D drone;
 
     public Client(DroneDriver<D> driver, ClientOptions options) {
         this.driver = driver;

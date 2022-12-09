@@ -1,6 +1,5 @@
 package me.rochblondiaux.parrot4j.api.network;
 
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -26,8 +25,6 @@ public class FTPConnection {
     private URLConnection connection;
     private InputStream inputStream;
     private BufferedReader reader;
-    @Getter
-    private boolean connected;
     private static final String FTP_PATH = "ftp://%s:%d/%s";
 
 
@@ -47,7 +44,6 @@ public class FTPConnection {
                 connection = url.openConnection();
                 inputStream = connection.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(inputStream));
-                this.connected = true;
             } catch (IOException e) {
                 throw new IllegalStateException(String.format("Error while connecting to url '%s'", path), e);
             }
@@ -68,7 +64,6 @@ public class FTPConnection {
             try {
                 reader.close();
                 inputStream.close();
-                this.connected = false;
             } catch (IOException e) {
                 throw new IllegalStateException("Error while disconnecting", e);
             }

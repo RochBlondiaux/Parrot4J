@@ -1,10 +1,6 @@
 package me.rochblondiaux.parrot4j.ardrone2.command;
 
 import lombok.Getter;
-import me.rochblondiaux.parrot4j.ardrone2.configuration.DroneConfiguration;
-import me.rochblondiaux.parrot4j.ardrone2.controller.Ar2Controller;
-import me.rochblondiaux.parrot4j.ardrone2.data.DroneData;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
@@ -17,26 +13,19 @@ import java.nio.IntBuffer;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-public abstract class ATCommand {
+public abstract class ATCommand implements Command {
 
     @Getter
     private final String name;
-    @Getter
-    private final boolean authenticationNeeded;
     private final FloatBuffer floatBuffer;
     private final IntBuffer intBuffer;
 
-    public ATCommand(String name, boolean authenticationNeeded) {
+    public ATCommand(String name) {
         this.name = name;
-        this.authenticationNeeded = authenticationNeeded;
 
         final ByteBuffer bb = ByteBuffer.allocate(4);
         this.floatBuffer = bb.asFloatBuffer();
         this.intBuffer = bb.asIntBuffer();
-    }
-
-    public ATCommand(String name) {
-        this(name, false);
     }
 
     /**
@@ -63,15 +52,7 @@ public abstract class ATCommand {
         return intBuffer.get(0);
     }
 
-    public int timeout() {
-        return -1;
-    }
-
-    public boolean isSuccessful(@NotNull DroneData data, @Nullable DroneConfiguration configuration) {
-        return true;
-    }
-
-    public void onExecution(@NotNull Ar2Controller controller) {
-
+    public @Nullable String preparationCommandText(int sequenceNumber) {
+        return null;
     }
 }

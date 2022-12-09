@@ -1,6 +1,5 @@
 package me.rochblondiaux.parrot4j.api.network;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.net.InetSocketAddress;
@@ -18,8 +17,6 @@ public abstract class AbstractConnection implements NetworkConnection {
     protected static final byte[] KEEP_ALIVE_BYTES = new byte[]{0x01, 0x00, 0x00, 0x00};
 
     private final InetSocketAddress address;
-    @Getter
-    protected boolean connected;
 
     @Override
     public CompletableFuture<Void> reconnect() {
@@ -31,4 +28,6 @@ public abstract class AbstractConnection implements NetworkConnection {
     public InetSocketAddress address() {
         return address;
     }
+
+    public abstract boolean isConnected();
 }

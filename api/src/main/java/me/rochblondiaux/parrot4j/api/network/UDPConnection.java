@@ -68,6 +68,11 @@ public class UDPConnection extends AbstractConnection {
     }
 
     private void makeKeepAlivePacket() {
-        keepAlivePacket = new DatagramPacket(KEEP_ALIVE_BYTES, KEEP_ALIVE_BYTES.length, address().getAddress(), address().getPort());
+        keepAlivePacket = new DatagramPacket(KEEP_ALIVE_BYTES, KEEP_ALIVE_BYTES.length, address());
+    }
+
+    @Override
+    public boolean isConnected() {
+        return socket != null;
     }
 }

@@ -1,8 +1,10 @@
-package me.rochblondiaux.parrot4j.ardrone2.command;
+package me.rochblondiaux.parrot4j.ardrone2.command.simple;
+
+import me.rochblondiaux.parrot4j.ardrone2.command.ATCommand;
 
 /**
  * Parrot4J
- * 08/12/2022
+ * 09/12/2022
  *
  * @author Roch Blondiaux (Kiwix).
  */

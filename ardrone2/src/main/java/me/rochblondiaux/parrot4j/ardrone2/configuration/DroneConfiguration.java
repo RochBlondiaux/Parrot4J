@@ -24,10 +24,6 @@ public class DroneConfiguration {
         this.data = data;
     }
 
-    public void reset() {
-        this.data = new HashMap<>();
-    }
-
     public @Nullable String get(ConfigurationKeys key) {
         return data.get(key);
     }

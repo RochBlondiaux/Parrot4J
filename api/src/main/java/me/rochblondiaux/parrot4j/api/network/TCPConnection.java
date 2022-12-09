@@ -78,4 +78,9 @@ public class TCPConnection extends AbstractConnection {
             throw new IllegalStateException("Error getting input stream", e);
         }
     }
+
+    @Override
+    public boolean isConnected() {
+        return socket != null && socket.isConnected();
+    }
 }
