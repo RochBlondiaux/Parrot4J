@@ -1,7 +1,9 @@
 package me.rochblondiaux.parrot4j.ardrone2.data;
 
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.parrot4j.api.network.UDPConnection;
+import me.rochblondiaux.parrot4j.ardrone2.Ar2Drone;
 import me.rochblondiaux.parrot4j.ardrone2.controller.Ar2Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +11,6 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Parrot4J
@@ -25,11 +26,15 @@ public class DataUpdater extends Thread {
     private final byte[] receivingBuffer;
     private final DatagramPacket incomingDataPacket;
     private final DataDecoder decoder;
+    private final Ar2Drone drone;
+    @Getter
+    private DroneData data;
     private final List<DataUpdateListener> listeners = new ArrayList<>();
 
 
     public DataUpdater(@NotNull Ar2Controller controller) {
         super("DataUpdater");
+        this.drone = controller.getDrone();
         this.connection = new UDPConnection(new InetSocketAddress(controller.getOptions().address(), controller.getOptions().ports().navigation()));
         this.decoder = new DataDecoder();
         this.receivingBuffer = new byte[RECEIVING_BUFFER_SIZE];
@@ -69,11 +74,12 @@ public class DataUpdater extends Thread {
 
     private void process() {
         try {
-            DroneData navData = decoder.from(receivingBuffer, incomingDataPacket.getLength());
-            if (navData == null)
+            this.data = decoder.from(receivingBuffer, incomingDataPacket.getLength());
+            if (this.data == null)
                 return;
-            log.trace("Received nav data - battery level: {} percent, altitude: {}", navData.battery(), navData.altitude());
-            listeners.forEach(droneDataConsumer -> droneDataConsumer.onDataUpdate(navData));
+            log.trace("Received nav data - battery level: {} percent, altitude: {}", data.battery(), data.altitude());
+            listeners.forEach(droneDataConsumer -> droneDataConsumer.onDataUpdate(data));
+            drone.data(this.data);
         } catch (RuntimeException ignored) {
         }
     }
@@ -87,7 +93,7 @@ public class DataUpdater extends Thread {
         connection.sendKeepAlivePacket();
     }
 
-    public void addListener(Consumer<DataUpdateListener> listener) {
+    public void addListener(DataUpdateListener listener) {
         listeners.add(listener);
     }
 }

@@ -25,6 +25,8 @@ public class Ar2Driver implements DroneDriver<Ar2Drone> {
     @Override
     public DroneController controller(@NotNull ClientOptions options, @NotNull Ar2Drone drone) {
         final CommandSender sender = new CommandSender(options);
-        return new Ar2Controller(sender, drone, options);
+        Ar2Controller controller = new Ar2Controller(sender, drone, options);
+        sender.setController(controller);
+        return controller;
     }
 }

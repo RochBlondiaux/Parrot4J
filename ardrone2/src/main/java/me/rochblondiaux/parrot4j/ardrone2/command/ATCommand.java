@@ -1,6 +1,11 @@
 package me.rochblondiaux.parrot4j.ardrone2.command;
 
 import lombok.Getter;
+import me.rochblondiaux.parrot4j.ardrone2.configuration.DroneConfiguration;
+import me.rochblondiaux.parrot4j.ardrone2.controller.Ar2Controller;
+import me.rochblondiaux.parrot4j.ardrone2.data.DroneData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -18,31 +23,20 @@ public abstract class ATCommand {
     private final String name;
     @Getter
     private final boolean authenticationNeeded;
-    @Getter
-    private final int timeOfExecution;
     private final FloatBuffer floatBuffer;
     private final IntBuffer intBuffer;
 
-    public ATCommand(String name, boolean authenticationNeeded, int timeOfExecution) {
+    public ATCommand(String name, boolean authenticationNeeded) {
         this.name = name;
         this.authenticationNeeded = authenticationNeeded;
-        this.timeOfExecution = timeOfExecution;
 
         final ByteBuffer bb = ByteBuffer.allocate(4);
         this.floatBuffer = bb.asFloatBuffer();
         this.intBuffer = bb.asIntBuffer();
     }
 
-    public ATCommand(String name, boolean authenticationNeeded) {
-        this(name, authenticationNeeded, 0);
-    }
-
-    public ATCommand(String name, int timeOfExecution) {
-        this(name, false, timeOfExecution);
-    }
-
     public ATCommand(String name) {
-        this(name, false, -1);
+        this(name, false);
     }
 
     /**
@@ -67,5 +61,17 @@ public abstract class ATCommand {
     protected int intOfFloat(float f) {
         floatBuffer.put(0, f);
         return intBuffer.get(0);
+    }
+
+    public int timeout() {
+        return -1;
+    }
+
+    public boolean isSuccessful(@NotNull DroneData data, @Nullable DroneConfiguration configuration) {
+        return true;
+    }
+
+    public void onExecution(@NotNull Ar2Controller controller) {
+
     }
 }

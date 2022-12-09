@@ -1,8 +1,10 @@
 package me.rochblondiaux.parrot4j.ardrone2.controller;
 
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.parrot4j.api.client.ClientOptions;
 import me.rochblondiaux.parrot4j.api.network.UDPConnection;
+import me.rochblondiaux.parrot4j.ardrone2.Ar2Drone;
 import me.rochblondiaux.parrot4j.ardrone2.command.ATCommand;
 import me.rochblondiaux.parrot4j.ardrone2.command.AuthenticationCommand;
 import me.rochblondiaux.parrot4j.ardrone2.model.AuthenticationData;
@@ -22,16 +24,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 @Log4j2
 public class CommandSender {
+
+    private static final int MAX_RETRIES = 5;
+
     private final UDPConnection connection;
     private final ConcurrentLinkedQueue<ATCommand> queue;
     private final Thread queueThread;
     private final AuthenticationData authenticationData;
     private int sequence;
+    @Setter
+    private Ar2Controller controller;
 
     public CommandSender(ClientOptions options) {
         this.connection = new UDPConnection(new InetSocketAddress(options.address(), options.ports().commands()));
         this.queue = new ConcurrentLinkedQueue<>();
-        this.sequence = 0;
+        this.sequence = 1;
         this.queueThread = new Thread(this::consumeQueue, "CommandSender");
         this.authenticationData = new AuthenticationData("Parrot4J", "Parrot4J");
     }
@@ -80,16 +87,23 @@ public class CommandSender {
 
     public CompletableFuture<Void> sendCommand(@NotNull ATCommand command) {
         return CompletableFuture.supplyAsync(() -> {
-            if (command.isAuthenticationNeeded())
-                sendCommand(new AuthenticationCommand(authenticationData));
-            sendTextCommand(command.buildText(nextSequence()));
-            if (command.getTimeOfExecution() > 0)
-                try {
-                    Thread.sleep(command.getTimeOfExecution());
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            return null;
+            final Ar2Drone drone = controller.getDrone();
+            int tries = 0;
+            while (tries++ < MAX_RETRIES) {
+                if (command.isAuthenticationNeeded())
+                    sendCommand(new AuthenticationCommand(authenticationData));
+                sendTextCommand(command.buildText(nextSequence()));
+                command.onExecution(controller);
+                if (command.timeout() > 0)
+                    try {
+                        Thread.sleep(command.timeout());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                if (command.isSuccessful(drone.data(), drone.configuration()))
+                    return null;
+            }
+            throw new RuntimeException("Command failed after " + MAX_RETRIES + " tries");
         });
     }
 

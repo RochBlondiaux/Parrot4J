@@ -14,7 +14,7 @@ public class PlayAnimationCommand extends ATCommand {
     private final int duration;
 
     public PlayAnimationCommand(DroneAnimation animation, int duration) {
-        super("ANIM", animation.getDuration());
+        super("ANIM");
         this.animation = animation;
         this.duration = duration;
     }
@@ -22,5 +22,10 @@ public class PlayAnimationCommand extends ATCommand {
     @Override
     protected String build(int sequence) {
         return "%d,%d,%d".formatted(sequence, animation.getId(), duration);
+    }
+
+    @Override
+    public int timeout() {
+        return animation.getDuration();
     }
 }

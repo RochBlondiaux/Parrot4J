@@ -1,6 +1,5 @@
 package me.rochblondiaux.parrot4j.ardrone2.command;
 
-import me.rochblondiaux.parrot4j.ardrone2.command.UpdateConfigurationCommand;
 import me.rochblondiaux.parrot4j.ardrone2.model.Camera;
 import me.rochblondiaux.parrot4j.ardrone2.model.ConfigurationKeys;
 

@@ -52,12 +52,12 @@ public class Ar2Controller implements DroneController {
         this.configurationUpdater.start();
         this.dataUpdater.start();
 
-        ATCommand navDataConfiguration = new UpdateConfigurationCommand(ConfigurationKeys.GENERAL_NAV_DATA_DEMO, "TRUE");
-        ATCommand videoConfiguration = new UpdateConfigurationCommand(ConfigurationKeys.VIDEO_CODEC, VideoCodec.H264_720P.getCodecValue()); // TODO: Make this configurable
-        ATCommand resetAckFlagCommand = new SetControlDataCommand(ControlDataMode.RESET_ACK_FLAG);
-        ATCommand getConfigurationDataCommand = new SetControlDataCommand(ControlDataMode.GET_CONFIGURATION_DATA);
+        final ATCommand navDataConfiguration = new UpdateConfigurationCommand(ConfigurationKeys.GENERAL_NAV_DATA_DEMO, "TRUE");
+        final ATCommand videoConfiguration = new UpdateConfigurationCommand(ConfigurationKeys.VIDEO_CODEC, VideoCodec.H264_720P.getCodecValue()); // TODO: Make this configurable
+        final ATCommand resetAckFlagCommand = new SetControlDataCommand(ControlDataMode.RESET_ACK_FLAG);
+        final ATCommand getConfigurationDataCommand = new SetControlDataCommand(ControlDataMode.GET_CONFIGURATION_DATA);
 
-        return sender.sendCommands(navDataConfiguration, videoConfiguration, resetAckFlagCommand, getConfigurationDataCommand)
+        return sender.sendCommands(resetAckFlagCommand, navDataConfiguration, resetAckFlagCommand, videoConfiguration, getConfigurationDataCommand)
                 .thenAccept(unused -> {
                     String firmwareVersion = drone.configuration().get(ConfigurationKeys.GENERAL_NUM_VERSION_SOFT);
                     if (firmwareVersion == null)

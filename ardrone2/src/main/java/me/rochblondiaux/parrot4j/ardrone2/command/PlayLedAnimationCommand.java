@@ -15,7 +15,7 @@ public class PlayLedAnimationCommand extends ATCommand {
     private final int durationInSecs;
 
     public PlayLedAnimationCommand(LedAnimation animation, float frequency, int durationInSecs) {
-        super("LED", durationInSecs * 1000);
+        super("LED");
         this.animation = animation;
         this.frequency = frequency;
         this.durationInSecs = durationInSecs;
@@ -24,5 +24,10 @@ public class PlayLedAnimationCommand extends ATCommand {
     @Override
     protected String build(int sequence) {
         return "%d,%d,%d,%d".formatted(sequence, animation.getId(), intOfFloat(frequency), durationInSecs);
+    }
+
+    @Override
+    public int timeout() {
+        return durationInSecs * 1000;
     }
 }
