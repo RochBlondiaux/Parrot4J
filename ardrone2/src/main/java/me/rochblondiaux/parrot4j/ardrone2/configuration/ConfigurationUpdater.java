@@ -37,7 +37,7 @@ public class ConfigurationUpdater extends Thread {
         log.info("Connecting to the drone control...");
         connection.connect()
                 .exceptionally(throwable -> {
-                    log.error("Unable to connect to the drone control", throwable);
+                    log.error("Unable to connect to the drone control channel", throwable);
                     System.exit(0);
                     return null;
                 })
@@ -49,6 +49,7 @@ public class ConfigurationUpdater extends Thread {
             process(data);
         }
         connection.disconnect();
+        log.info("ConfigurationUpdater disconnected.");
     }
 
     private void process(List<String> data) {

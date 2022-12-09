@@ -9,6 +9,7 @@ import me.rochblondiaux.parrot4j.api.network.FTPConnection;
 import me.rochblondiaux.parrot4j.ardrone2.Ar2Drone;
 import me.rochblondiaux.parrot4j.ardrone2.command.*;
 import me.rochblondiaux.parrot4j.ardrone2.configuration.ConfigurationUpdater;
+import me.rochblondiaux.parrot4j.ardrone2.data.DataUpdater;
 import me.rochblondiaux.parrot4j.ardrone2.model.ConfigurationKeys;
 import me.rochblondiaux.parrot4j.ardrone2.model.ControlDataMode;
 import me.rochblondiaux.parrot4j.ardrone2.model.FlightMode;
@@ -30,28 +31,45 @@ import java.util.concurrent.CompletableFuture;
 @Getter
 public class Ar2Controller implements DroneController {
 
+    private static final String MIN_FIRMWARE_VERSION = "1.6.4";
+
     private final CommandSender sender;
     private final Ar2Drone drone;
     private final ClientOptions options;
     private final ConfigurationUpdater configurationUpdater;
+    private final DataUpdater dataUpdater;
 
     public Ar2Controller(CommandSender sender, Ar2Drone drone, ClientOptions options) {
         this.sender = sender;
         this.drone = drone;
         this.options = options;
         this.configurationUpdater = new ConfigurationUpdater(this);
+        this.dataUpdater = new DataUpdater(this);
     }
 
     @Override
     public CompletableFuture<Void> initialize() {
         this.configurationUpdater.start();
+        this.dataUpdater.start();
 
         ATCommand navDataConfiguration = new UpdateConfigurationCommand(ConfigurationKeys.GENERAL_NAV_DATA_DEMO, "TRUE");
         ATCommand videoConfiguration = new UpdateConfigurationCommand(ConfigurationKeys.VIDEO_CODEC, VideoCodec.H264_720P.getCodecValue()); // TODO: Make this configurable
         ATCommand resetAckFlagCommand = new SetControlDataCommand(ControlDataMode.RESET_ACK_FLAG);
         ATCommand getConfigurationDataCommand = new SetControlDataCommand(ControlDataMode.GET_CONFIGURATION_DATA);
 
-        return sender.sendCommands(navDataConfiguration, videoConfiguration, resetAckFlagCommand, getConfigurationDataCommand);
+        return sender.sendCommands(navDataConfiguration, videoConfiguration, resetAckFlagCommand, getConfigurationDataCommand)
+                .thenAccept(unused -> {
+                    String firmwareVersion = drone.configuration().get(ConfigurationKeys.GENERAL_NUM_VERSION_SOFT);
+                    if (firmwareVersion == null)
+                        throw new IllegalStateException("Firmware version is null");
+                    if (me.rochblondiaux.parrot4j.api.util.VersionUtil.compareVersions(firmwareVersion, MIN_FIRMWARE_VERSION) == -1)
+                        throw new IllegalStateException("The firmware version of the drone is too old. Please update it to at least " + MIN_FIRMWARE_VERSION);
+                    isCompatible()
+                            .thenAccept(aBoolean -> {
+                                if (!aBoolean)
+                                    throw new IllegalStateException("The firmware version of the drone is not compatible with this version of Parrot4J. Please update it to at least " + MIN_FIRMWARE_VERSION);
+                            });
+                });
     }
 
     @Override
@@ -121,7 +139,7 @@ public class Ar2Controller implements DroneController {
     @Override
     public void disconnect() {
         this.configurationUpdater.interrupt();
-
+        this.dataUpdater.interrupt();
         this.sender.disconnect();
     }
 }
