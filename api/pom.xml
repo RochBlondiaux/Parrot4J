@@ -11,6 +11,16 @@
 
     <name>Parrot4j-API</name>
 
+    <!-- Dependencies -->
+    <dependencies>
+        <!-- Log4J Core -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.19.0</version>
+        </dependency>
+    </dependencies>
+
     <!-- Build -->
     <build>
         <finalName>${project.name}</finalName>

@@ -1,16 +1,21 @@
 package me.rochblondiaux.parrot4j.api.client;
 
 import lombok.Builder;
-import me.rochblondiaux.parrot4j.api.drone.model.DronePort;
+import lombok.Data;
 
 import java.net.InetAddress;
 
 /**
  * Parrot4J
- * 07/12/2022
+ * 10/12/2022
  *
  * @author Roch Blondiaux (Kiwix).
  */
+@Data
 @Builder
-public record ClientOptions(InetAddress address, DronePort ports, boolean gps, boolean hull, boolean outdoor) {
+public class ClientOptions {
+
+    private final InetAddress address;
+    private final boolean hull;
+    private final boolean outdoor;
 }

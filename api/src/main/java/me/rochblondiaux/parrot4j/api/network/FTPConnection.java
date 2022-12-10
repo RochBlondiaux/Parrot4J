@@ -40,7 +40,7 @@ public class FTPConnection {
     public CompletableFuture<Void> connect(@NotNull String path) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                URL url = new URL(FTP_PATH.formatted(address.getHostString(), address.getPort(), path));
+                URL url = new URL(String.format(FTP_PATH, address.getHostString(), address.getPort(), path));
                 connection = url.openConnection();
                 inputStream = connection.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(inputStream));

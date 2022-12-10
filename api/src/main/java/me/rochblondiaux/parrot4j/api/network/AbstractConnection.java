@@ -20,8 +20,7 @@ public abstract class AbstractConnection implements NetworkConnection {
 
     @Override
     public CompletableFuture<Void> reconnect() {
-        return disconnect()
-                .thenAccept(unused -> connect());
+        return disconnect().thenAccept(unused -> connect());
     }
 
     @Override

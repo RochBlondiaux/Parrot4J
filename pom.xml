@@ -20,7 +20,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <java.version>19</java.version>
+        <java.version>11</java.version>
     </properties>
 
     <!-- Repositories -->
@@ -38,12 +38,7 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.19.0</version>
-        </dependency>
-        <!-- Log4J Core -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.19.0</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Lombok -->
         <dependency>
