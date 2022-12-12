@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Parrot4J
@@ -19,10 +20,11 @@ public abstract class ATCommand implements Command {
     private final String name;
     private final FloatBuffer floatBuffer;
     private final IntBuffer intBuffer;
+    private final CompletableFuture<Void> callback;
 
     public ATCommand(String name) {
         this.name = name;
-
+        this.callback = new CompletableFuture<>();
         final ByteBuffer bb = ByteBuffer.allocate(4);
         this.floatBuffer = bb.asFloatBuffer();
         this.intBuffer = bb.asIntBuffer();
@@ -58,5 +60,10 @@ public abstract class ATCommand implements Command {
 
     public boolean hasPreparationCommand() {
         return preparationCommandText(-1) != null;
+    }
+
+    @Override
+    public CompletableFuture<Void> callback() {
+        return callback;
     }
 }

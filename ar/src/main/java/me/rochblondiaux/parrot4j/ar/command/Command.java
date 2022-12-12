@@ -5,6 +5,7 @@ import me.rochblondiaux.parrot4j.ar.data.NavigationData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -32,4 +33,7 @@ public interface Command {
 
     default void isSuccessful(@NotNull NavigationData data, @Nullable DroneConfiguration configuration) {
     }
+
+    CompletableFuture<Void> callback();
+
 }

@@ -25,7 +25,7 @@ import java.util.Objects;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-public class InitConfigurationCommand implements ComposedCommand {
+public class InitConfigurationCommand extends ComposedCommand {
 
     public static final String MIN_FIRMWARE_VERSION = "1.6.4";
 
@@ -34,6 +34,7 @@ public class InitConfigurationCommand implements ComposedCommand {
     private final ArDrone drone;
 
     public InitConfigurationCommand(@NotNull ArDrone drone, @NotNull AuthenticationData data, @NotNull VideoCodec codec) {
+        super();
         this.data = data;
         this.codec = codec;
         this.drone = drone;

@@ -15,7 +15,7 @@ import java.util.List;
  * @author Roch Blondiaux (Kiwix).
  */
 @RequiredArgsConstructor
-public class LoginCommand implements ComposedCommand {
+public class LoginCommand extends ComposedCommand {
 
     private final AuthenticationData data;
 

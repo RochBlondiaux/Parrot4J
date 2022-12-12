@@ -16,13 +16,14 @@ import java.util.List;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-public class SetConfigValueCommand implements ComposedCommand {
+public class SetConfigValueCommand extends ComposedCommand {
 
     private final AuthenticationData data;
     private final ConfigurationKeys key;
     private final Object value;
 
     public SetConfigValueCommand(AuthenticationData data, ConfigurationKeys key, Object value) {
+        super();
         this.data = data;
         this.key = key;
         this.value = value;

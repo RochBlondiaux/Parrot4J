@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-public class GetConfigurationDataCommand implements ComposedCommand {
+public class GetConfigurationDataCommand extends ComposedCommand {
     @Override
     public List<Command> commands() {
         return List.of(

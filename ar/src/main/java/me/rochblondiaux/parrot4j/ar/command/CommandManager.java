@@ -13,10 +13,9 @@ import org.tinylog.Logger;
 
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
@@ -32,8 +31,7 @@ public class CommandManager extends StatefulManager {
 
     private final ArController controller;
     private final UDPConnection connection;
-    private final ConcurrentLinkedQueue<Command> queue;
-    private final ConcurrentHashMap<Integer, CompletableFuture<Void>> callbacks;
+    private final BlockingQueue<Command> queue;
     private final Thread queueThread;
     private final AuthenticationData authenticationData;
     private final AtomicInteger commandsCount = new AtomicInteger(0);
@@ -44,9 +42,8 @@ public class CommandManager extends StatefulManager {
         this.controller = controller;
         this.authenticationData = new AuthenticationData("Parrot4J", "Parrot4J");
         this.connection = new UDPConnection(new InetSocketAddress(controller.getOptions().getAddress(), controller.getOptions().getModel().ports().commands()));
-        this.queue = new ConcurrentLinkedQueue<>();
+        this.queue = new LinkedBlockingQueue<>();
         this.queueThread = new Thread(this::consumeQueue, "CommandSender");
-        this.callbacks = new ConcurrentHashMap<>();
     }
 
     public @Blocking void start() {
@@ -71,10 +68,9 @@ public class CommandManager extends StatefulManager {
     public void consumeQueue() {
         while (!queueThread.isInterrupted()) {
             try {
-                final Command cmd = queue.poll();
-                if (cmd == null || !this.connection.isConnected()) {
-                    if (!this.connection.isConnected())
-                        Logger.warn("Connection is not ready, waiting...");
+                final Command cmd = queue.take();
+                if (!this.connection.isConnected()) {
+                    Logger.warn("Connection is not ready, waiting...");
                     Thread.sleep(50);
                     continue;
                 }
@@ -91,12 +87,14 @@ public class CommandManager extends StatefulManager {
     }
 
     public @NotNull CompletableFuture<Void> send(@NotNull Command command) {
-        final CompletableFuture<Void> future = new CompletableFuture<>();
-        callbacks.put(command.getId(), future);
-        queue.offer(command);
-        if (command instanceof ATCommand && commandsCount.getAndIncrement() % 10 == 0)
-            queue.offer(new WatchdogResetCommand());
-        return future.orTimeout(10, TimeUnit.SECONDS);
+        try {
+            queue.put(command);
+            if (command instanceof ATCommand && commandsCount.getAndIncrement() % 10 == 0)
+                queue.put(new WatchdogResetCommand());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return command.callback();
     }
 
     private void sendCommand(@NotNull Command command) {
@@ -105,25 +103,25 @@ public class CommandManager extends StatefulManager {
             Logger.warn("The drone command channel is not ready, command queued.");
             return;
         }
-        final CompletableFuture<Void> future = callbacks.get(command.getId());
         if (command instanceof ATCommand) {
             ATCommand atCommand = (ATCommand) command;
             if (atCommand.hasPreparationCommand())
                 sendTextCommand(atCommand.preparationCommandText(sequence()));
             sendTextCommand(atCommand.buildText(sequence()));
-            execute(atCommand, future);
+            execute(atCommand);
         } else if (command instanceof ComposedCommand) {
             ComposedCommand composedCommand = (ComposedCommand) command;
-            CompletableFuture.runAsync(() -> {
+            try {
                 CompletableFuture.allOf(composedCommand.commands()
                                 .stream()
                                 .map(this::send)
                                 .toArray(CompletableFuture[]::new))
                         .thenAccept(unused -> {
-                            future.completeAsync(null);
-                            callbacks.remove(command.getId());
+                            command.callback().complete(null);
                         });
-            });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -137,33 +135,36 @@ public class CommandManager extends StatefulManager {
         connection.send(sendPacket);
     }
 
-    private void execute(@NotNull ATCommand command, @NotNull CompletableFuture<Void> future) {
+    private void execute(@NotNull ATCommand command) {
         final ArDrone drone = controller.getDrone();
         final AtomicInteger tries = new AtomicInteger(0);
         long start = System.currentTimeMillis();
         CompletableFuture.runAsync(() -> {
-            while (tries.getAndIncrement() < MAX_RETRIES) {
-                try {
-                    if (command.timeout() > 0)
-                        Thread.sleep(command.timeout());
+            try {
+                while (tries.getAndIncrement() < MAX_RETRIES) {
                     try {
-                        command.isSuccessful(drone.navigationData(), drone.configuration());
-                        Logger.info("Command {} executed successfully in {}ms!", command.getClass().getSimpleName(), System.currentTimeMillis() - start);
-                        future.completeAsync(null);
-                        callbacks.remove(command.getId());
-                        return;
-                    } catch (Exception e) {
-                        Logger.warn("Command {} failed, retrying.. ({}).", command.getClass().getSimpleName(), e.getMessage());
+                        if (command.timeout() > 0)
+                            Thread.sleep(command.timeout());
+                        try {
+                            command.isSuccessful(drone.navigationData(), drone.configuration());
+                            Logger.info("Command {} executed successfully in {}ms!", command.getClass().getSimpleName(), System.currentTimeMillis() - start);
+                            command.callback().complete(null);
+                            return;
+                        } catch (Exception e) {
+                            Logger.warn("Command {} failed, retrying.. ({}).", command.getClass().getSimpleName(), e.getMessage());
+                        }
+                        sendCommand(command);
+                        Thread.sleep(15);
+                    } catch (InterruptedException e) {
+                        command.callback().completeExceptionally(e);
                     }
-                    sendCommand(command);
-                    Thread.sleep(15);
-                } catch (InterruptedException e) {
-                    future.completeExceptionally(e);
-                    throw new RuntimeException(e);
                 }
+                command.callback().completeExceptionally(new RuntimeException("Command " + command.getClass().getSimpleName() + " failed after " + tries.get() + " tries"));
+                Logger.error("Command {} failed after {} tries!", command.getClass().getSimpleName(), MAX_RETRIES);
+            } catch (Exception e) {
+                Logger.error(e);
+                e.printStackTrace();
             }
-            future.completeExceptionally(new RuntimeException("Command " + command.getClass().getSimpleName() + " failed after " + tries.get() + " tries"));
-            Logger.error("Command {} failed after {} tries!", command.getClass().getSimpleName(), MAX_RETRIES);
         }, ArController.EXECUTOR);
     }
 
