@@ -51,7 +51,7 @@ public class ArController implements DroneController {
             this.commandManager.start();
 
             // Init commands
-            this.commandManager.send(data -> new InitConfigurationCommand(data, VideoCodec.H264_720P)).join();
+            this.commandManager.send(data -> new InitConfigurationCommand(drone, data, VideoCodec.H264_720P)).join();
         });
     }
 

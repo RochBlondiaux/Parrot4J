@@ -1,6 +1,7 @@
 package me.rochblondiaux.parrot4j.ar.command.simple;
 
 import lombok.extern.log4j.Log4j2;
+import me.rochblondiaux.parrot4j.api.util.Preconditions;
 import me.rochblondiaux.parrot4j.ar.command.ATCommand;
 import me.rochblondiaux.parrot4j.ar.configuration.DroneConfiguration;
 import me.rochblondiaux.parrot4j.ar.data.NavigationData;
@@ -48,14 +49,14 @@ public class SetControlDataCommand extends ATCommand {
     }
 
     @Override
-    public boolean isSuccessful(@NotNull NavigationData data, @Nullable DroneConfiguration configuration) {
+    public void isSuccessful(@NotNull NavigationData data, @Nullable DroneConfiguration configuration) {
         switch (controlDataMode) {
             case RESET_ACK_FLAG:
-                return data != null && data.state().controlReceived();
+                Preconditions.checkState(!data.state().controlReceived(), "The command config ACK flag was not reset");
+                break;
             case GET_CONFIGURATION_DATA:
-                return configuration != null;
-            default:
-                return true;
+                Preconditions.checkNotNull(configuration, "The drone configuration was not sent");
+                break;
         }
     }
 }

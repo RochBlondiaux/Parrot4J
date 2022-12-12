@@ -30,7 +30,6 @@ public interface Command {
         return -1;
     }
 
-    default boolean isSuccessful(@NotNull NavigationData data, @Nullable DroneConfiguration configuration) {
-        return true;
+    default void isSuccessful(@NotNull NavigationData data, @Nullable DroneConfiguration configuration) {
     }
 }

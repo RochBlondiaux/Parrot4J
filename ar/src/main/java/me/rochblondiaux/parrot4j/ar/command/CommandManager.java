@@ -147,11 +147,14 @@ public class CommandManager extends StatefulManager {
                 try {
                     if (command.timeout() > 0)
                         Thread.sleep(command.timeout());
-                    if (command.isSuccessful(drone.navigationData(), drone.configuration())) {
+                    try {
+                        command.isSuccessful(drone.navigationData(), drone.configuration());
                         log.info("Command {} executed successfully in {}ms!", command.getClass().getSimpleName(), System.currentTimeMillis() - start);
                         future.completeAsync(null);
                         callbacks.remove(command.getId());
                         return;
+                    } catch (Exception e) {
+                        log.warn("Command {} failed, retrying.. ({}).", command.getClass().getSimpleName(), e.getMessage());
                     }
                     sendCommand(command);
                     Thread.sleep(15);

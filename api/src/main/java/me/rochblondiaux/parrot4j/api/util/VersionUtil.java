@@ -1,10 +1,10 @@
 package me.rochblondiaux.parrot4j.api.util;
 
 import lombok.experimental.UtilityClass;
+import me.rochblondiaux.parrot4j.api.drone.DroneModel;
 import me.rochblondiaux.parrot4j.api.drone.implementation.DroneModels;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * Parrot4J
@@ -17,10 +17,11 @@ public class VersionUtil {
 
     public static final String VERSION_SEPARATOR = "\\.";
 
-    public static Optional<DroneModels> fromVersionNumber(String model, String versionNumber) {
+    public static DroneModel fromVersionNumber(String model, String versionNumber) {
         return Arrays.stream(DroneModels.values())
                 .filter(m -> m.model().equalsIgnoreCase(model) && m.majorVersion() == getMajorVersion(versionNumber))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown drone model"));
     }
 
     public static int getMajorVersion(String versionNumber) {
