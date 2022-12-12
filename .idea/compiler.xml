@@ -7,9 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="parrot4j-ardrone2" />
+        <module name="parrot4j-ar" />
         <module name="parrot4j-api" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="parrot4j-ardrone2" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

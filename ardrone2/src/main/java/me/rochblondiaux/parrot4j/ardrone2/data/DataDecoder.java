@@ -1,7 +1,7 @@
 package me.rochblondiaux.parrot4j.ardrone2.data;
 
-import me.rochblondiaux.parrot4j.api.model.Rotation;
-import me.rochblondiaux.parrot4j.api.model.Speed;
+import me.rochblondiaux.parrot4j.api.event.Rotation;
+import me.rochblondiaux.parrot4j.api.event.Speed;
 import me.rochblondiaux.parrot4j.ardrone2.model.ControlAlgorithm;
 
 import static me.rochblondiaux.parrot4j.ardrone2.utils.BinaryDataHelper.*;

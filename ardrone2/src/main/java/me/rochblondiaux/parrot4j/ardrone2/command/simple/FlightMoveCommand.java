@@ -1,6 +1,6 @@
 package me.rochblondiaux.parrot4j.ardrone2.command.simple;
 
-import me.rochblondiaux.parrot4j.api.model.Rotation;
+import me.rochblondiaux.parrot4j.api.event.Rotation;
 import me.rochblondiaux.parrot4j.ardrone2.command.ATCommand;
 
 /**

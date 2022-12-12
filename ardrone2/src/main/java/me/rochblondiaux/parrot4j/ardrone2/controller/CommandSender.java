@@ -145,7 +145,7 @@ public class CommandSender extends StatefulService {
         byte[] sendData = commandText.getBytes();
         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, connection.address());
         if (!commandText.startsWith("AT*COMWDG"))
-            log.info("Sending command: " + commandText);
+            log.debug("Sending command: " + commandText);
         connection.send(sendPacket);
     }
 

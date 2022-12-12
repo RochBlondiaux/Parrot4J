@@ -1,21 +1,19 @@
-package me.rochblondiaux.parrot4j.ardrone2.data;
+package me.rochblondiaux.parrot4j.ar.data;
 
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.rochblondiaux.parrot4j.api.event.Rotation;
-import me.rochblondiaux.parrot4j.api.event.Speed;
+import me.rochblondiaux.parrot4j.api.model.Rotation;
+import me.rochblondiaux.parrot4j.api.model.Speed;
 
 import java.util.Objects;
 
 /**
  * Parrot4J
- * 09/12/2022
+ * 10/12/2022
  *
  * @author Roch Blondiaux (Kiwix).
  */
 @Setter
-@NoArgsConstructor
-public final class DroneData {
+public class NavigationData {
 
     private boolean onlyHeaderPresent;
     private int battery;
@@ -24,7 +22,6 @@ public final class DroneData {
     private Speed speed;
     private float altitude;
     private DroneState state;
-
 
     public boolean onlyHeaderPresent() {
         return onlyHeaderPresent;
@@ -58,7 +55,7 @@ public final class DroneData {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (DroneData) obj;
+        var that = (NavigationData) obj;
         return this.onlyHeaderPresent == that.onlyHeaderPresent &&
                 this.battery == that.battery &&
                 this.sequenceNumber == that.sequenceNumber &&
@@ -84,6 +81,4 @@ public final class DroneData {
                 "altitude=" + altitude + ", " +
                 "state=" + state + ']';
     }
-
-
 }

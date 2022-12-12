@@ -18,6 +18,7 @@ public class EventManager {
 
     public <E extends Event> EventManager addListener(Class<E> eventClass, Consumer<E> listener) {
         listeners.computeIfAbsent(eventClass, k -> new ArrayList<>()).add((Consumer<Event>) listener);
+        return this;
     }
 
     public void call(Event event) {

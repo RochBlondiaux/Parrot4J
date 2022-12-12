@@ -2,6 +2,7 @@ package me.rochblondiaux.parrot4j.api.client;
 
 import lombok.Builder;
 import lombok.Data;
+import me.rochblondiaux.parrot4j.api.drone.DroneModel;
 
 import java.net.InetAddress;
 
@@ -18,4 +19,5 @@ public class ClientOptions {
     private final InetAddress address;
     private final boolean hull;
     private final boolean outdoor;
+    private final DroneModel model;
 }

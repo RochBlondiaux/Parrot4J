@@ -32,6 +32,16 @@ public class BinaryDataHelper {
         return Float.intBitsToFloat(getIntValue(data, offset, length));
     }
 
+    public static int getNormalizedIntValue(Float value) {
+        if (value < -1.0f)
+            value = -1.0f;
+        else if (value > 1.0f)
+            value = 1.0f;
+
+        return Float.floatToIntBits(value);
+    }
+
+
     public static boolean flagSet(int flagsValue, int index) {
         return (flagsValue & (1 << index)) != 0;
     }

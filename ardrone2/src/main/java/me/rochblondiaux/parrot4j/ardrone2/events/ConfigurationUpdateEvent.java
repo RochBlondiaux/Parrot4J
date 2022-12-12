@@ -1,6 +1,7 @@
 package me.rochblondiaux.parrot4j.ardrone2.events;
 
 import me.rochblondiaux.parrot4j.api.event.Event;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Parrot4J
@@ -8,5 +9,5 @@ import me.rochblondiaux.parrot4j.api.event.Event;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-public record DroneDataUpdateEvent(Ar2Drone drone, DroneData data) implements Event {
+public record ConfigurationUpdateEvent(@NotNull DroneConfiguration configuration) implements Event {
 }

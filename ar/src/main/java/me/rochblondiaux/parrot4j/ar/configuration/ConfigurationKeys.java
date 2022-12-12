@@ -1,4 +1,4 @@
-package me.rochblondiaux.parrot4j.ardrone2.model;
+package me.rochblondiaux.parrot4j.ar.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

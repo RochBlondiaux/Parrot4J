@@ -3,7 +3,7 @@ package me.rochblondiaux.parrot4j.ardrone2.video.decoder;
 import com.xuggle.xuggler.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import me.rochblondiaux.parrot4j.api.event.EventService;
+import me.rochblondiaux.parrot4j.api.event.EventManager;
 import me.rochblondiaux.parrot4j.api.network.TCPConnection;
 import me.rochblondiaux.parrot4j.ardrone2.events.ImageReceivedEvent;
 
@@ -162,7 +162,7 @@ public class H264VideoDecoder {
                                 }
                             }
                         }
-                        EventService.call(new ImageReceivedEvent(Utils.videoPictureToImage(newPic)));
+                        EventManager.call(new ImageReceivedEvent(Utils.videoPictureToImage(newPic)));
                     }
                 } // end of while
             } catch (Exception e) {
