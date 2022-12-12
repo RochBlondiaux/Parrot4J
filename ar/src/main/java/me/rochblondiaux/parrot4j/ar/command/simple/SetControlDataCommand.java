@@ -1,6 +1,5 @@
 package me.rochblondiaux.parrot4j.ar.command.simple;
 
-import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.parrot4j.api.util.Preconditions;
 import me.rochblondiaux.parrot4j.ar.command.ATCommand;
 import me.rochblondiaux.parrot4j.ar.configuration.DroneConfiguration;
@@ -15,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-@Log4j2
 public class SetControlDataCommand extends ATCommand {
 
     private final ControlDataMode controlDataMode;

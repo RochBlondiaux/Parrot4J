@@ -1,6 +1,5 @@
 package me.rochblondiaux.parrot4j.ar.data;
 
-import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.parrot4j.api.network.UDPConnection;
 import me.rochblondiaux.parrot4j.api.util.StatefulManager;
 import me.rochblondiaux.parrot4j.ar.ArController;
@@ -8,6 +7,7 @@ import me.rochblondiaux.parrot4j.ar.ArDrone;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NonBlocking;
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
@@ -18,7 +18,6 @@ import java.net.InetSocketAddress;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-@Log4j2
 public class NavigationDataManager extends StatefulManager implements Runnable {
 
     public static final int RECEIVING_BUFFER_SIZE = 10240;
@@ -40,17 +39,17 @@ public class NavigationDataManager extends StatefulManager implements Runnable {
 
     public @Blocking void start() {
         long start = System.currentTimeMillis();
-        log.info("Starting navigation data manager...");
+        Logger.info("Starting navigation data manager...");
         this.connection.connect()
                 .exceptionally(throwable -> {
-                    log.error("Error while connecting to the drone navigation channel.", throwable);
+                    Logger.error("Error while connecting to the drone navigation channel.", throwable);
                     System.exit(0);
                     return null;
                 })
                 .thenAccept(unused -> {
                     this.thread.setDaemon(true);
                     this.thread.start();
-                    log.info("Navigation data manager started in {}ms", System.currentTimeMillis() - start);
+                    Logger.info("Navigation data manager started in {}ms", System.currentTimeMillis() - start);
                     initializeCommunication();
                     setReady(true);
                 });
@@ -72,25 +71,25 @@ public class NavigationDataManager extends StatefulManager implements Runnable {
                 connection.sendKeepAlivePacket();
             } catch (Throwable e) {
                 connection.sendKeepAlivePacket();
-                log.error("Error while receiving data from the drone.", e);
+                Logger.error("Error while receiving data from the drone.", e);
             }
         }
         connection.disconnect()
                 .exceptionally(throwable -> {
-                    log.error("Error while disconnecting from the drone navigation channel.", throwable);
+                    Logger.error("Error while disconnecting from the drone navigation channel.", throwable);
                     return null;
                 })
                 .join();
-        log.info("Navigation data manager stopped.");
+        Logger.info("Navigation data manager stopped.");
     }
 
     private void process() {
         try {
-            log.debug("Processing drone data...");
+            Logger.debug("Processing drone data...");
             NavigationData data = decoder.from(receivingBuffer, incomingDataPacket.getLength());
             if (data == null)
                 return;
-            log.debug("Received nav data - battery level: {} percent, altitude: {}", data.battery(), data.altitude());
+            Logger.debug("Received nav data - battery level: {} percent, altitude: {}", data.battery(), data.altitude());
             drone.updateNavigationData(data);
             // TODO: call an event
             return;

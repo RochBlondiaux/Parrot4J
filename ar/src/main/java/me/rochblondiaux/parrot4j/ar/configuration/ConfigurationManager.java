@@ -1,12 +1,12 @@
 package me.rochblondiaux.parrot4j.ar.configuration;
 
-import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.parrot4j.api.network.TCPConnection;
 import me.rochblondiaux.parrot4j.api.util.StatefulManager;
 import me.rochblondiaux.parrot4j.ar.ArController;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NonBlocking;
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,7 +22,6 @@ import java.util.Map;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-@Log4j2
 public class ConfigurationManager extends StatefulManager implements Runnable {
 
     private final DroneConfiguration configuration;
@@ -36,15 +35,15 @@ public class ConfigurationManager extends StatefulManager implements Runnable {
     }
 
     public @Blocking void start() {
-        log.info("Connecting to the drone control channel...");
+        Logger.info("Connecting to the drone control channel...");
         connection.connect()
                 .exceptionally(throwable -> {
-                    log.error("Unable to connect to the drone control channel", throwable);
+                    Logger.error("Unable to connect to the drone control channel", throwable);
                     System.exit(0);
                     return null;
                 })
                 .thenAccept(unused -> {
-                    log.info("Connected to the drone control channel.");
+                    Logger.info("Connected to the drone control channel.");
                     this.thread.setDaemon(true);
                     this.thread.start();
                     setReady(true);
@@ -62,15 +61,15 @@ public class ConfigurationManager extends StatefulManager implements Runnable {
     public void run() {
         while (!thread.isInterrupted()) {
             if (!connection.isConnected()) {
-                log.warn("Drone control channel disconnect, reconnecting...");
+                Logger.warn("Drone control channel disconnect, reconnecting...");
                 setReady(false);
                 connection.reconnect()
                         .exceptionally(throwable -> {
-                            log.error("Unable to reconnect to the drone control channel!");
+                            Logger.error("Unable to reconnect to the drone control channel!");
                             return null;
                         })
                         .join();
-                log.info("Reconnected to the drone control channel.");
+                Logger.info("Reconnected to the drone control channel.");
             }
             final List<String> data = read();
             if (data == null || data.isEmpty())
@@ -78,11 +77,11 @@ public class ConfigurationManager extends StatefulManager implements Runnable {
             process(data);
         }
         connection.disconnect();
-        log.info("Disconnected from the drone control channel.");
+        Logger.info("Disconnected from the drone control channel.");
     }
 
     private void process(List<String> data) {
-        log.debug("Processing drone configuration data...");
+        Logger.debug("Processing drone configuration data...");
         long start = System.currentTimeMillis();
 
         Map<ConfigurationKeys, String> parsedData = new HashMap<>();
@@ -91,11 +90,11 @@ public class ConfigurationManager extends StatefulManager implements Runnable {
             if (split.length != 2)
                 continue;
             ConfigurationKeys.from(split[0])
-                    .ifPresentOrElse(configurationKeys -> parsedData.put(configurationKeys, split[1]), () -> log.warn("Unknown configuration key: {}", split[0]));
+                    .ifPresentOrElse(configurationKeys -> parsedData.put(configurationKeys, split[1]), () -> Logger.warn("Unknown configuration key: {}", split[0]));
         }
         configuration.update(parsedData);
         // TODO: Call an event
-        log.debug("Drone configuration data processed in {} ms.", System.currentTimeMillis() - start);
+        Logger.debug("Drone configuration data processed in {} ms.", System.currentTimeMillis() - start);
     }
 
 

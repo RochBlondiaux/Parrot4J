@@ -1,6 +1,5 @@
 package me.rochblondiaux.parrot4j.ar.command.composed;
 
-import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.parrot4j.api.drone.DroneModel;
 import me.rochblondiaux.parrot4j.api.drone.DroneVersion;
 import me.rochblondiaux.parrot4j.api.util.Preconditions;
@@ -15,6 +14,7 @@ import me.rochblondiaux.parrot4j.ar.model.AuthenticationData;
 import me.rochblondiaux.parrot4j.ar.model.VideoCodec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +25,6 @@ import java.util.Objects;
  *
  * @author Roch Blondiaux (Kiwix).
  */
-@Log4j2
 public class InitConfigurationCommand implements ComposedCommand {
 
     public static final String MIN_FIRMWARE_VERSION = "1.6.4";
@@ -76,6 +75,6 @@ public class InitConfigurationCommand implements ComposedCommand {
         final DroneVersion version = DroneVersion.of(firmwareVersion, hardwareVersion);
         final DroneModel model = VersionUtil.fromVersionNumber("AR", configurationVersion);
         this.drone.initInformation(version, model);
-        log.info("Drone version: {}, model: {}", version, model);
+        Logger.info("Drone version: {}, model: {}", version, model);
     }
 }

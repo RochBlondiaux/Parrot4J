@@ -21,6 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <java.version>11</java.version>
+        <tinylog.version>2.5.0</tinylog.version>
     </properties>
 
     <!-- Repositories -->
@@ -33,11 +34,11 @@
 
     <!-- Dependencies -->
     <dependencies>
-        <!-- Log4J API -->
+        <!-- TinyLog API -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.19.0</version>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-api</artifactId>
+            <version>${tinylog.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Lombok -->
